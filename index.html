@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ISLAMIYAH — Portal Akademik SMP</title>
+  <meta name="theme-color" content="#2563EB" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      /* Gradasi ala macOS Sequoia / iOS Mesh */
+      --mac-bg: radial-gradient(circle at 12% 15%, #dbeafe 0%, transparent 45%),
+                radial-gradient(circle at 88% 12%, #e0e7ff 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, #ccfbf1 0%, transparent 50%),
+                #f4f7fb;
+      --hero-grad: linear-gradient(135deg, #1e3a8a 0%, #2563eb 48%, #0ea5e9 100%);
+      --card-grad: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #06b6d4 100%);
+      --accent-grad: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+      --glass: rgba(255, 255, 255, 0.82);
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow-soft: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
+      --shadow-float: 0 16px 36px -6px rgba(37, 99, 235, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--mac-bg); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; }
+
+    /* App Shell Responsif (Mobile First & Desktop Rapi) */
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: rgba(248, 250, 252, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      position: relative;
+      padding-bottom: 92px;
+      box-shadow: 0 0 60px rgba(15, 23, 42, 0.08);
+      overflow-x: hidden;
+    }
+
+    /* ================= LOGIN & REGISTER ================= */
+    .auth-screen {
+      min-height: 100vh;
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: radial-gradient(circle at top right, #bfdbfe, transparent 55%),
+                  radial-gradient(circle at bottom left, #a7f3d0, transparent 55%),
+                  #f8fafc;
+    }
+    .brand-box { text-align: center; margin-bottom: 28px; }
+    .brand-logo {
+      width: 84px; height: 84px; margin: 0 auto 14px;
+      border-radius: 24px;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28);
+    }
+    .brand-title { font-size: 26px; font-weight: 800; letter-spacing: 1.5px; background: var(--card-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+    .auth-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+    }
+    .seg-control {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: #e2e8f0; padding: 4px; border-radius: 14px; margin-bottom: 18px;
+    }
+    .seg-btn {
+      border: none; padding: 10px; border-radius: 11px; font-weight: 700; font-size: 13px;
+      background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.25s;
+    }
+    .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+    .form-input, .form-select {
+      width: 100%; padding: 13px 15px; border-radius: 14px;
+      border: 1.5px solid #cbd5e1; background: rgba(255,255,255,0.9);
+      font-size: 14px; outline: none; transition: 0.2s;
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+
+    .btn-primary {
+      width: 100%; padding: 14px; border: none; border-radius: 16px;
+      background: var(--hero-grad); color: #fff; font-weight: 700; font-size: 15px;
+      cursor: pointer; box-shadow: var(--shadow-float); transition: transform 0.15s;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); }
+    .auth-switch span { color: var(--primary); font-weight: 700; cursor: pointer; }
+
+    /* ================= GOPAY-STYLE HEADER & HERO ================= */
+    .gopay-header {
+      background: var(--hero-grad);
+      padding: 20px 20px 68px;
+      border-bottom-left-radius: 32px;
+      border-bottom-right-radius: 32px;
+      color: #fff;
+      position: relative;
+    }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; }
+    .user-pill { display: flex; align-items: center; gap: 10px; }
+    .avatar-circle {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); border: 1.5px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;
+    }
+    .badge-kelas {
+      display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 99px;
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); font-weight: 600; margin-top: 2px;
+    }
+    .top-actions { display: flex; gap: 8px; }
+    .icon-pill {
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.18); color: #fff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px;
+    }
+
+    /* KARTU TAGIHAN BULANAN (PLEK-KETIPLEK SALDO GOPAY) */
+    .gopay-wallet-wrap { padding: 0 18px; margin-top: -50px; position: relative; z-index: 5; }
+    .gopay-wallet-card {
+      background: var(--card-grad);
+      border-radius: 24px;
+      padding: 16px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 18px 35px -10px rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+    .wallet-balance-box {
+      background: rgba(255,255,255,0.95);
+      color: var(--text-main);
+      border-radius: 18px;
+      padding: 12px 14px;
+      flex: 1.15;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+    .wallet-brand { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .wallet-amount { font-size: 18px; font-weight: 800; margin: 4px 0 2px; color: #0f172a; }
+    .wallet-sub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 155px; }
+
+    .wallet-actions { display: flex; gap: 10px; flex: 1; justify-content: space-around; }
+    .w-act {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      background: none; border: none; color: #fff; cursor: pointer; font-size: 11px; font-weight: 600;
+    }
+    .w-act-icon {
+      width: 38px; height: 38px; border-radius: 13px;
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+      transition: 0.2s;
+    }
+    .w-act:active .w-act-icon { transform: scale(0.92); background: rgba(255,255,255,0.35); }
+
+    /* GRID MENU 8 IKON (GOPAY STYLE) */
+    .section-wrap { padding: 18px 18px 0; }
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 8px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      padding: 18px 12px; border-radius: 24px; box-shadow: var(--shadow-soft);
+    }
+    .menu-item {
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 7px;
+      background: none; border: none; cursor: pointer;
+    }
+    .menu-icon {
+      width: 48px; height: 48px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06); transition: transform 0.2s;
+    }
+    .menu-item:active .menu-icon { transform: scale(0.92); }
+    .menu-label { font-size: 11.5px; font-weight: 600; color: #1e293b; line-height: 1.2; }
+
+    /* WARNA GRADASI IKON MACOS */
+    .g-blue { background: linear-gradient(135deg, #dbeafe, #93c5fd); color: #1d4ed8; }
+    .g-indigo { background: linear-gradient(135deg, #e0e7ff, #a5b4fc); color: #4338ca; }
+    .g-emerald { background: linear-gradient(135deg, #d1fae5, #6ee7b7); color: #047857; }
+    .g-amber { background: linear-gradient(135deg, #fef3c7, #fcd34d); color: #b45309; }
+    .g-rose { background: linear-gradient(135deg, #ffe4e6, #fda4af); color: #be123c; }
+    .g-cyan { background: linear-gradient(135deg, #cffafe, #67e8f9); color: #0e7490; }
+    .g-purple { background: linear-gradient(135deg, #f3e8ff, #d8b4fe); color: #7e22ce; }
+    .g-slate { background: linear-gradient(135deg, #e2e8f0, #cbd5e1); color: #334155; }
+
+    /* CARDS & LISTS */
+    .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .sec-title { font-size: 16px; font-weight: 800; color: #0f172a; }
+    .sec-link { font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer; }
+
+    .glass-card {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 22px; padding: 16px; margin-bottom: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px;
+      border-radius: 99px; background: #dbeafe; color: #1d4ed8;
+    }
+    .tag.lunas { background: #d1fae5; color: #047857; }
+    .tag.belum { background: #fee2e2; color: #b91c1c; }
+
+    /* PAGE HEADER (SUB-PAGES) */
+    .sub-header {
+      background: var(--hero-grad); color: #fff;
+      padding: 20px 18px; border-bottom-left-radius: 26px; border-bottom-right-radius: 26px;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 12px; border: none;
+      background: rgba(255,255,255,0.2); color: #fff; font-size: 18px; cursor: pointer;
+    }
+
+    /* BOTTOM NAVIGATION (5 SLOT ALA GOPAY DENGAN TOMBOL TENGAH BESAR) */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px; height: 74px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(226, 232, 240, 0.8);
+      display: grid; grid-template-columns: repeat(5, 1fr); align-items: center;
+      padding: 0 6px 6px; z-index: 50;
+    }
+    .nav-btn {
+      background: none; border: none; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+      color: #64748b; font-size: 11px; font-weight: 600; cursor: pointer;
+    }
+    .nav-btn.active { color: var(--primary); font-weight: 800; }
+    .nav-btn svg { width: 22px; height: 22px; }
+
+    /* TOMBOL TENGAH MENONJOL (PENGGANTI QRIS GOPAY -> LATSOL / CBT) */
+    .nav-center-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
+    .nav-center-btn {
+      width: 58px; height: 58px; border-radius: 50%; border: 4px solid #fff;
+      background: var(--accent-grad); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: -28px; box-shadow: 0 10px 24px rgba(16, 185, 129, 0.42);
+      cursor: pointer; transition: transform 0.2s;
+    }
+    .nav-center-btn:active { transform: scale(0.93); }
+    .nav-center-label { font-size: 11px; font-weight: 800; color: #047857; margin-top: 3px; }
+
+    /* TABS & FILTERS */
+    .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
+    .chip {
+      padding: 8px 14px; border-radius: 99px; border: 1px solid #cbd5e1;
+      background: #fff; font-size: 12px; font-weight: 700; color: #475569; cursor: pointer; white-space: nowrap;
+    }
+    .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* KARTU PELAJAR DIGITAL */
+    .id-card {
+      background: var(--card-grad); color: #fff; border-radius: 24px; padding: 22px;
+      position: relative; overflow: hidden; box-shadow: var(--shadow-float);
+    }
+    .id-card::after {
+      content: ""; position: absolute; right: -30px; bottom: -30px;
+      width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.1);
+    }
+
+    .hidden { display: none !important; }
+    .toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 99px;
+      font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+
+  <div class="app-shell">
+    <!-- ==================== 1. HALAMAN LOGIN & REGISTRASI ==================== -->
+    <div id="auth-view" class="auth-screen">
+      <div class="brand-box">
+        <img src="./icon.svg" alt="Logo ISLAMIYAH" class="brand-logo" />
+        <div class="brand-title">ISLAMIYAH</div>
+        <div class="brand-sub">Smart School Portal • SMP Islamiyah</div>
+      </div>
+
+      <div class="auth-card">
+        <div class="seg-control">
+          <button id="role-siswa-btn" class="seg-btn active" onclick="setAuthRole('siswa')">🎓 Siswa (NIS)</button>
+          <button id="role-guru-btn" class="seg-btn" onclick="setAuthRole('guru')">👨‍🏫 Guru (Email)</button>
+        </div>
+
+        <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+          <div id="reg-name-group" class="form-group hidden">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" id="auth-name" class="form-input" placeholder="Contoh: Muhammad Rizky" />
+          </div>
+
+          <div id="reg-kelas-group" class="form-group hidden">
+            <label class="form-label" id="kelas-label">Pilih Kelas</label>
+            <select id="auth-kelas" class="form-select">
+              <option value="VII-A">Kelas VII-A</option>
+              <option value="VII-B">Kelas VII-B</option>
+              <option value="VIII-A">Kelas VIII-A</option>
+              <option value="VIII-B">Kelas VIII-B</option>
+              <option value="IX-A">Kelas IX-A</option>
+              <option value="IX-B">Kelas IX-B</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="id-label">Nomor Induk Siswa (NIS)</label>
+            <input type="text" id="auth-identifier" class="form-input" placeholder="Masukkan NIS (Demo: 2026001)" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="secret-label">PIN Siswa (6 Digit)</label>
+            <input type="password" id="auth-secret" class="form-input" placeholder="Masukkan PIN (Demo: 123456)" required />
+          </div>
+
+          <button type="submit" id="auth-submit-btn" class="btn-primary">Masuk Portal ISLAMIYAH</button>
+        </form>
+
+        <div class="auth-switch">
+          <p id="auth-toggle-text">Belum punya akun? <span onclick="toggleAuthMode()">Daftar Sekarang</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MAIN APP (SETELAH LOGIN) ==================== -->
+    <div id="main-app" class="hidden">
+
+      <!-- 2. BERANDA (GOPAY STYLE) -->
+      <div id="page-home">
+        <div class="gopay-header">
+          <div class="top-bar">
+            <div class="user-pill">
+              <div class="avatar-circle" id="hdr-avatar">A</div>
+              <div>
+                <div style="font-size: 12px; opacity: 0.85;">Assalamu'alaikum,</div>
+                <div style="font-size: 16px; font-weight: 800;" id="hdr-name">Ahmad Zaki</div>
+                <span class="badge-kelas" id="hdr-badge">Kelas VII-A • TA 2026/2027</span>
+              </div>
+            </div>
+            <div class="top-actions">
+              <button id="install-pwa-btn" class="icon-pill hidden" onclick="installPWA()" title="Install Aplikasi">📲</button>
+              <button class="icon-pill" onclick="navigate('agenda')" title="Agenda Sekolah">🔔</button>
+              <button class="icon-pill" onclick="navigate('profile')" title="Profil">⚙️</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KARTU TAGIHAN BULANAN (PENGGANTI SALDO GOPAY) -->
+        <div class="gopay-wallet-wrap">
+          <div class="gopay-wallet-card">
+            <div class="wallet-balance-box" onclick="navigate('tagihan')">
+              <div class="wallet-brand">💳 Tagihan Sekolah</div>
+              <div class="wallet-amount" id="home-bill-amount">Rp 185.000</div>
+              <div class="wallet-sub" id="home-bill-desc">Seragam Olahraga & Batik</div>
+            </div>
+            <div class="wallet-actions">
+              <button class="w-act" onclick="navigate('tagihan')">
+                <div class="w-act-icon">🧾</div>
+                <span>Rincian</span>
+              </button>
+              <button class="w-act" onclick="confirmBillPayment()">
+                <div class="w-act-icon">✅</div>
+                <span>Konfirmasi</span>
+              </button>
+              <button class="w-act" onclick="navigate('tagihan')">
+                <div class="w-act-icon">🕒</div>
+                <span>Riwayat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRID 8 MENU UTAMA ALA GOPAY -->
+        <div class="section-wrap">
+          <div class="menu-grid">
+            <button class="menu-item" onclick="navigate('jadwal')">
+              <div class="menu-icon g-blue">📅</div>
+              <span class="menu-label">Jadwal Kelas</span>
+            </button>
+            <button class="menu-item" onclick="navigate('nilai')">
+              <div class="menu-icon g-emerald">📊</div>
+              <span class="menu-label">Hasil Ujian</span>
+            </button>
+            <button class="menu-item" onclick="navigate('agenda')">
+              <div class="menu-icon g-indigo">🗓️</div>
+              <span class="menu-label">Agenda 1 Thn</span>
+            </button>
+            <button class="menu-item" onclick="navigate('presensi')">
+              <div class="menu-icon g-cyan">✋</div>
+              <span class="menu-label">Presensi</span>
+            </button>
+            <button class="menu-item" onclick="navigate('tugas')">
+              <div class="menu-icon g-amber">📚</div>
+              <span class="menu-label">Tugas & PR</span>
+            </button>
+            <button class="menu-item" onclick="navigate('library')">
+              <div class="menu-icon g-purple">📖</div>
+              <span class="menu-label">E-Library</span>
+            </button>
+            <button class="menu-item" onclick="navigate('card')">
+              <div class="menu-icon g-rose">🪪</div>
+              <span class="menu-label">Kartu Digital</span>
+            </button>
+            <button class="menu-item" id="menu-guru-panel" onclick="navigate('guru-panel')">
+              <div class="menu-icon g-slate">🛠️</div>
+              <span class="menu-label" id="menu-8-label">Panel Guru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- WIDGET JADWAL HARI INI -->
+        <div class="section-wrap">
+          <div class="sec-header">
+            <span class="sec-title">Jadwal Kelas Hari Ini</span>
+            <span class="sec-link" onclick="navigate('jadwal')">Lihat Semua →</span>
+          </div>
+          <div id="home-schedule-preview"></div>
+        </div>
+
+        <!-- WIDGET AGENDA TERDEKAT -->
+        <div class="section-wrap">
+          <div class="sec-header">
+            <span class="sec-title">Agenda Sekolah Mendatang</span>
+            <span class="sec-link" onclick="navigate('agenda')">1 Tahun Ajaran →</span>
+          </div>
+          <div id="home-agenda-preview"></div>
+        </div>
+      </div>
+
+      <!-- 3. HALAMAN JADWAL PELAJARAN KELAS -->
+      <div id="page-jadwal" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Jadwal Pelajaran</h3>
+            <p style="font-size:12px; opacity:0.85;" id="jadwal-subtitle">Kelas VII-A</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="chip-row" id="day-chips">
+            <button class="chip active" onclick="filterJadwal('Semua', this)">Semua Hari</button>
+            <button class="chip" onclick="filterJadwal('Senin', this)">Senin</button>
+            <button class="chip" onclick="filterJadwal('Selasa', this)">Selasa</button>
+            <button class="chip" onclick="filterJadwal('Rabu', this)">Rabu</button>
+            <button class="chip" onclick="filterJadwal('Kamis', this)">Kamis</button>
+            <button class="chip" onclick="filterJadwal('Jumat', this)">Jumat</button>
+          </div>
+          <div id="jadwal-list"></div>
+        </div>
+      </div>
+
+      <!-- 4. HALAMAN KALENDER KEGIATAN 1 TAHUN AJARAN -->
+      <div id="page-agenda" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Kalender Kegiatan Sekolah</h3>
+            <p style="font-size:12px; opacity:0.85;">Tahun Ajaran 2026/2027 (1 Tahun Penuh)</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;" id="agenda-list"></div>
+      </div>
+
+      <!-- 5. HALAMAN HASIL UJIAN (UTS & UAS - GANJIL & GENAP) -->
+      <div id="page-nilai" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Hasil Evaluasi & Ujian</h3>
+            <p style="font-size:12px; opacity:0.85;">Pantauan Nilai UTS & UAS</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="seg-control">
+            <button id="sem-ganjil-btn" class="seg-btn active" onclick="setExamFilter('Ganjil', null)">Semester Ganjil</button>
+            <button id="sem-genap-btn" class="seg-btn" onclick="setExamFilter('Genap', null)">Semester Genap</button>
+          </div>
+          <div class="chip-row">
+            <button id="type-uts-btn" class="chip active" onclick="setExamFilter(null, 'UTS')">UTS (Tengah Semester)</button>
+            <button id="type-uas-btn" class="chip" onclick="setExamFilter(null, 'UAS')">UAS (Akhir Semester)</button>
+          </div>
+          <div class="glass-card" style="background: var(--card-grad); color:#fff; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:12px; opacity:0.85;">Rata-Rata Nilai</div>
+              <div style="font-size:28px; font-weight:800;" id="exam-avg">0</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px; opacity:0.85;">Predikat</div>
+              <div style="font-size:20px; font-weight:800;" id="exam-grade">-</div>
+            </div>
+          </div>
+          <div id="exam-list"></div>
+        </div>
+      </div>
+
+      <!-- 6. HALAMAN LATIHAN SOAL / CBT (TOMBOL TENGAH BESAR) -->
+      <div id="page-latsol" class="hidden">
+        <div class="sub-header" style="background: var(--accent-grad);">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Latihan Soal & Tryout CBT</h3>
+            <p style="font-size:12px; opacity:0.9;">Persiapan UTS & UAS SMP Islamiyah</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;" id="quiz-container"></div>
+      </div>
+
+      <!-- 7. HALAMAN PRESENSI -->
+      <div id="page-presensi" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Presensi Kehadiran</h3>
+            <p style="font-size:12px; opacity:0.85;">Rekap & Konfirmasi Kehadiran</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="glass-card" style="display:grid; grid-template-columns:repeat(3,1fr); text-align:center;">
+            <div><strong style="font-size:20px; color:var(--success);">96%</strong><div style="font-size:11px; color:var(--text-muted);">Hadir</div></div>
+            <div><strong style="font-size:20px; color:var(--warning);">1</strong><div style="font-size:11px; color:var(--text-muted);">Izin/Sakit</div></div>
+            <div><strong style="font-size:20px; color:var(--danger);">0</strong><div style="font-size:11px; color:var(--text-muted);">Alpa</div></div>
+          </div>
+          <button class="btn-primary" style="margin-bottom:16px;" onclick="submitQuickAttendance()">✅ Catat Kehadiran Hari Ini</button>
+          <div id="attendance-list"></div>
+        </div>
+      </div>
+
+      <!-- 8. HALAMAN TUGAS & LMS -->
+      <div id="page-tugas" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Tugas & Materi Kelas</h3>
+            <p style="font-size:12px; opacity:0.85;">Learning Management System</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;" id="tugas-list"></div>
+      </div>
+
+      <!-- 9. HALAMAN TAGIHAN NON-SPP -->
+      <div id="page-tagihan" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Rincian Tagihan Sekolah</h3>
+            <p style="font-size:12px; opacity:0.85;">Seragam, Buku Paket & Kegiatan</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;" id="bills-list"></div>
+      </div>
+
+      <!-- 10. HALAMAN E-LIBRARY -->
+      <div id="page-library" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">E-Library Islamiyah</h3>
+            <p style="font-size:12px; opacity:0.85;">Perpustakaan Digital & Modul</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="glass-card">
+            <span class="tag">Buku Paket</span>
+            <h4 style="margin:8px 0 4px;">Pendidikan Agama Islam & Budi Pekerti VII</h4>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Kurikulum Merdeka • Edisi Revisi</p>
+            <button class="chip active" onclick="showToast('Membuka modul PDF...')">📖 Baca Modul</button>
+          </div>
+          <div class="glass-card">
+            <span class="tag">Sains</span>
+            <h4 style="margin:8px 0 4px;">Matematika & Logika Terapan SMP</h4>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Kumpulan Rumus & Pembahasan Soal</p>
+            <button class="chip active" onclick="showToast('Membuka modul PDF...')">📖 Baca Modul</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. HALAMAN PANEL GURU (ADMIN INPUT DATA) -->
+      <div id="page-guru-panel" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Panel Akademik Guru</h3>
+            <p style="font-size:12px; opacity:0.85;">Input Nilai Ujian, Agenda & Tagihan</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;" id="guru-panel-content"></div>
+      </div>
+
+      <!-- 12. HALAMAN KARTU PELAJAR & PROFIL -->
+      <div id="page-card" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Kartu Identitas Digital</h3>
+            <p style="font-size:12px; opacity:0.85;">SMP ISLAMIYAH</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="id-card">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px;">
+              <img src="./icon.svg" style="width:44px; height:44px; border-radius:12px;" />
+              <div>
+                <div style="font-weight:800; letter-spacing:1px;">SMP ISLAMIYAH</div>
+                <div style="font-size:11px; opacity:0.8;">Kartu Tanda Anggota Akademik</div>
+              </div>
+            </div>
+            <div style="font-size:20px; font-weight:800;" id="card-name">Ahmad Zaki Pratama</div>
+            <div style="font-size:13px; opacity:0.9; margin-top:4px;" id="card-nis">NIS: 2026001 • Kelas VII-A</div>
+            <div style="margin-top:18px; font-size:11px; opacity:0.8;">Status: AKTIF • Tahun Ajaran 2026/2027</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="page-profile" class="hidden">
+        <div class="sub-header">
+          <button class="back-btn" onclick="navigate('home')">←</button>
+          <div>
+            <h3 style="font-size:18px;">Akun & Pengaturan</h3>
+            <p style="font-size:12px; opacity:0.85;">Portal SMP ISLAMIYAH</p>
+          </div>
+        </div>
+        <div class="section-wrap" style="padding-top:0;">
+          <div class="glass-card">
+            <h4 id="prof-name">Nama Pengguna</h4>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;" id="prof-detail">Detail Akun</p>
+          </div>
+          <div class="glass-card" id="pwa-guide-box">
+            <h4>📲 Install ke Home Screen (Android / Windows)</h4>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+              • <strong>Android (Chrome):</strong> Ketuk titik tiga (⋮) di pojok kanan atas browser $\rightarrow$ pilih <em>"Tambahkan ke Layar Utama / Install App"</em>.<br/>
+              • <strong>Windows (Edge/Chrome):</strong> Klik ikon komputer/tambah (+) di sisi kanan kolom alamat URL $\rightarrow$ klik <em>Install</em>.
+            </p>
+          </div>
+          <button class="btn-primary" style="background: var(--danger);" onclick="logout()">Keluar dari Akun</button>
+        </div>
+      </div>
+
+      <!-- BOTTOM NAVIGATION BAR (5 SLOT ALA GOPAY) -->
+      <nav class="bottom-nav">
+        <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9l-8-6z"/></svg>
+          <span>Beranda</span>
+        </button>
+        <button class="nav-btn" id="nav-jadwal" onclick="navigate('jadwal')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+          <span>Jadwal</span>
+        </button>
+
+        <!-- TOMBOL TENGAH MENONJOL (LATSOL / CBT) -->
+        <div class="nav-center-wrap">
+          <button class="nav-center-btn" onclick="navigate('latsol')" title="Latihan Soal">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </button>
+          <span class="nav-center-label">Latsol</span>
+        </div>
+
+        <button class="nav-btn" id="nav-nilai" onclick="navigate('nilai')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          <span>Nilai</span>
+        </button>
+        <button class="nav-btn" id="nav-profile" onclick="navigate('profile')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          <span>Akun</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================================
+    // 1. KONFIGURASI SUPABASE (GANTI DENGAN PUNYA KAMU)
+    // ==========================================================
+    const SUPABASE_URL = 'https://kpftnxrrughnnlizzdjl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZnRueHJydWdobm5saXp6ZGpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTk1NDIsImV4cCI6MjExMDk3NTU0Mn0.RwW1VCRzDJeR72EMg1KnFbgqF_8Xh80fdQ2lKnu5g6s';
+
+    const isSupabaseConfigured = !SUPABASE_URL.includes('YOUR_PROJECT_ID');
+    const sb = isSupabaseConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    // ==========================================================
+    // 2. DATA CADANGAN / DEMO LOKAL (JIKA SUPABASE BELUM DIISI)
+    // ==========================================================
+    const DEMO_DB = {
+      profiles: [
+        { role: 'siswa', nis: '2026001', email: null, password_or_pin: '123456', full_name: 'Ahmad Zaki Pratama', kelas: 'VII-A' },
+        { role: 'siswa', nis: '2026002', email: null, password_or_pin: '123456', full_name: 'Siti Aisyah Putri', kelas: 'VIII-B' },
+        { role: 'guru', nis: null, email: 'guru@islamiyah.sch.id', password_or_pin: 'admin123', full_name: 'Ustadz/ah SMP Islamiyah', kelas: 'Guru Akademik' }
+      ],
+      schedules: [
+        { kelas: 'VII-A', hari: 'Senin', jam: '07:00 - 07:45', mapel: 'Upacara & Pembinaan Karakter', guru: 'Tim Kesiswaan', ruang: 'Lapangan' },
+        { kelas: 'VII-A', hari: 'Senin', jam: '07:45 - 09:15', mapel: 'Matematika', guru: 'Bpk. Hendra, S.Pd.', ruang: 'R. VII-A' },
+        { kelas: 'VII-A', hari: 'Senin', jam: '09:30 - 11:00', mapel: 'Pendidikan Agama Islam', guru: 'Ust. Fauzan, M.Pd.I', ruang: 'R. VII-A' },
+        { kelas: 'VII-A', hari: 'Selasa', jam: '07:00 - 08:30', mapel: 'Ilmu Pengetahuan Alam', guru: 'Ibu Rina, S.Si.', ruang: 'Lab IPA' },
+        { kelas: 'VII-A', hari: 'Selasa', jam: '08:30 - 10:00', mapel: 'Bahasa Inggris', guru: 'Miss Nadia, S.Pd.', ruang: 'R. VII-A' },
+        { kelas: 'VII-A', hari: 'Rabu', jam: '07:00 - 08:30', mapel: 'Bahasa Arab & Tahfidz', guru: 'Ust. Salman, Lc.', ruang: 'Masjid Sekolah' },
+        { kelas: 'VIII-B', hari: 'Senin', jam: '07:45 - 09:15', mapel: 'Bahasa Indonesia', guru: 'Ibu Dewi, S.Pd.', ruang: 'R. VIII-B' }
+      ],
+      events: [
+        { tanggal: '14 Jul 2026', bulan: 'Juli', judul: 'MPLS & Masa Ta\'aruf Siswa Baru', kategori: 'Kegiatan', deskripsi: 'Pengenalan lingkungan sekolah SMP Islamiyah.' },
+        { tanggal: '17 Agu 2026', bulan: 'Agustus', judul: 'Upacara HUT RI & Lomba Kemerdekaan', kategori: 'Kegiatan', deskripsi: 'Lomba antar kelas dan upacara bendera.' },
+        { tanggal: '21 Sep 2026', bulan: 'September', judul: 'Ujian Tengah Semester (UTS) Ganjil', kategori: 'Ujian', deskripsi: 'Evaluasi pembelajaran tengah semester ganjil.' },
+        { tanggal: '07 Des 2026', bulan: 'Desember', judul: 'Ujian Akhir Semester (UAS) Ganjil', kategori: 'Ujian', deskripsi: 'Penilaian akhir semester ganjil TA 2026/2027.' },
+        { tanggal: '08 Mar 2027', bulan: 'Maret', judul: 'Pesantren Kilat Ramadhan', kategori: 'Keagamaan', deskripsi: 'Kajian keislaman, tadarus, dan santunan.' },
+        { tanggal: '15 Mar 2027', bulan: 'Maret', judul: 'Ujian Tengah Semester (UTS) Genap', kategori: 'Ujian', deskripsi: 'Evaluasi tengah semester genap.' },
+        { tanggal: '02 Jun 2027', bulan: 'Juni', judul: 'Ujian Akhir Semester (UAS) Genap', kategori: 'Ujian', deskripsi: 'Penilaian akhir tahun ajaran.' }
+      ],
+      exams: [
+        { nis: '2026001', semester: 'Ganjil', jenis_ujian: 'UTS', mapel: 'Matematika', nilai: 88, kkm: 75 },
+        { nis: '2026001', semester: 'Ganjil', jenis_ujian: 'UTS', mapel: 'Pendidikan Agama Islam', nilai: 94, kkm: 75 },
+        { nis: '2026001', semester: 'Ganjil', jenis_ujian: 'UTS', mapel: 'Bahasa Inggris', nilai: 85, kkm: 75 },
+        { nis: '2026001', semester: 'Ganjil', jenis_ujian: 'UAS', mapel: 'Matematika', nilai: 90, kkm: 75 },
+        { nis: '2026001', semester: 'Ganjil', jenis_ujian: 'UAS', mapel: 'Pendidikan Agama Islam', nilai: 96, kkm: 75 },
+        { nis: '2026001', semester: 'Genap', jenis_ujian: 'UTS', mapel: 'Matematika', nilai: 89, kkm: 75 },
+        { nis: '2026001', semester: 'Genap', jenis_ujian: 'UAS', mapel: 'Matematika', nilai: 92, kkm: 75 }
+      ],
+      bills: [
+        { id: 'b1', nis: '2026001', judul: 'Seragam Olahraga & Batik Sekolah', bulan: 'November 2026', nominal: 185000, status: 'Belum Lunas', keterangan: 'Atribut seragam resmi non-SPP.' },
+        { id: 'b2', nis: '2026001', judul: 'Modul LKS Semester Ganjil', bulan: 'Oktober 2026', nominal: 120000, status: 'Lunas', keterangan: 'Lunas terverifikasi tata usaha.' }
+      ],
+      assignments: [
+        { kelas: 'VII-A', mapel: 'Matematika', judul: 'Latihan Aljabar Linear Bab 3', deadline: '26 Nov 2026', tipe: 'Tugas', deskripsi: 'Kerjakan soal nomor 1-10 di buku latihan.' },
+        { kelas: 'VII-A', mapel: 'IPA', judul: 'Rangkuman Ekosistem & Rantai Makanan', deadline: '28 Nov 2026', tipe: 'Materi', deskripsi: 'Pelajari slide materi sebelum praktikum.' }
+      ],
+      quizzes: [
+        { mapel: 'Matematika', pertanyaan: 'Hasil dari 3x + 5 = 20 adalah nilai x sebesar...', opsi_a: '3', opsi_b: '5', opsi_c: '15', opsi_d: '25', jawaban_benar: 'B' },
+        { mapel: 'PAI', pertanyaan: 'Hukum bacaan nun sukun bertemu dengan huruf ba disebut...', opsi_a: 'Idzhar', opsi_b: 'Idgham', opsi_c: 'Iqlab', opsi_d: 'Ikhfa', jawaban_benar: 'C' },
+        { mapel: 'Bahasa Inggris', pertanyaan: 'She ___ to SMP Islamiyah every morning.', opsi_a: 'go', opsi_b: 'goes', opsi_c: 'going', opsi_d: 'gone', jawaban_benar: 'B' }
+      ],
+      attendance: [
+        { tanggal: '23 Nov 2026', status: 'Hadir', catatan: 'Tepat waktu 06:50 WIB' },
+        { tanggal: '22 Nov 2026', status: 'Hadir', catatan: 'Tepat waktu 06:52 WIB' }
+      ]
+    };
+
+    // ==========================================================
+    // 3. STATE APLIKASI
+    // ==========================================================
+    let authRole = 'siswa';
+    let isRegisterMode = false;
+    let currentUser = null;
+    let selectedSemester = 'Ganjil';
+    let selectedExamType = 'UTS';
+    let selectedDay = 'Semua';
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2800);
+    }
+
+    // ==========================================================
+    // 4. LOGIKA AUTH (LOGIN & REGISTRASI)
+    // ==========================================================
+    function setAuthRole(role) {
+      authRole = role;
+      document.getElementById('role-siswa-btn').classList.toggle('active', role === 'siswa');
+      document.getElementById('role-guru-btn').classList.toggle('active', role === 'guru');
+      document.getElementById('id-label').textContent = role === 'siswa' ? 'Nomor Induk Siswa (NIS)' : 'Email Guru';
+      document.getElementById('auth-identifier').placeholder = role === 'siswa' ? 'Masukkan NIS (Demo: 2026001)' : 'guru@islamiyah.sch.id';
+      document.getElementById('secret-label').textContent = role === 'siswa' ? 'PIN Siswa (6 Digit)' : 'Password Guru';
+      document.getElementById('auth-secret').placeholder = role === 'siswa' ? 'Masukkan PIN (Demo: 123456)' : 'Masukkan Password (Demo: admin123)';
+      document.getElementById('reg-kelas-group').classList.toggle('hidden', !isRegisterMode || role === 'guru');
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('reg-name-group').classList.toggle('hidden', !isRegisterMode);
+      document.getElementById('reg-kelas-group').classList.toggle('hidden', !isRegisterMode || authRole === 'guru');
+      document.getElementById('auth-submit-btn').textContent = isRegisterMode ? 'Daftar Akun Baru' : 'Masuk Portal ISLAMIYAH';
+      document.getElementById('auth-toggle-text').innerHTML = isRegisterMode
+        ? 'Sudah punya akun? <span onclick="toggleAuthMode()">Masuk di sini</span>'
+        : 'Belum punya akun? <span onclick="toggleAuthMode()">Daftar Sekarang</span>';
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const identifier = document.getElementById('auth-identifier').value.trim();
+      const secret = document.getElementById('auth-secret').value.trim();
+      const fullName = document.getElementById('auth-name').value.trim();
+      const kelas = document.getElementById('auth-kelas').value;
+
+      if (isRegisterMode) {
+        if (!fullName) return showToast('Nama lengkap wajib diisi!');
+        const newProfile = {
+          role: authRole,
+          nis: authRole === 'siswa' ? identifier : null,
+          email: authRole === 'guru' ? identifier : null,
+          password_or_pin: secret,
+          full_name: fullName,
+          kelas: authRole === 'siswa' ? kelas : 'Guru Pengajar'
+        };
+        if (sb) {
+          const { data, error } = await sb.from('profiles').insert([newProfile]).select().single();
+          if (error) return showToast('Gagal daftar: ' + error.message);
+          currentUser = data;
+        } else {
+          DEMO_DB.profiles.push(newProfile);
+          currentUser = newProfile;
+        }
+        showToast('Registrasi berhasil! Selamat datang.');
+        enterApp();
+      } else {
+        let found = null;
+        if (sb) {
+          const col = authRole === 'siswa' ? 'nis' : 'email';
+          const { data } = await sb.from('profiles').select('*').eq('role', authRole).eq(col, identifier).eq('password_or_pin', secret).maybeSingle();
+          found = data;
+        } else {
+          found = DEMO_DB.profiles.find(p =>
+            p.role === authRole &&
+            (authRole === 'siswa' ? p.nis === identifier : p.email === identifier) &&
+            p.password_or_pin === secret
+          );
+        }
+        if (!found) return showToast('NIS/Email atau PIN/Password salah!');
+        currentUser = found;
+        localStorage.setItem('islamiyah_user', JSON.stringify(found));
+        enterApp();
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('islamiyah_user');
+      currentUser = null;
+      document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('auth-view').classList.remove('hidden');
+    }
+
+    // ==========================================================
+    // 5. INISIALISASI DASHBOARD & RENDER DATA
+    // ==========================================================
+    async function enterApp() {
+      document.getElementById('auth-view').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+
+      document.getElementById('hdr-avatar').textContent = currentUser.full_name.charAt(0).toUpperCase();
+      document.getElementById('hdr-name').textContent = currentUser.full_name;
+      document.getElementById('hdr-badge').textContent = currentUser.role === 'siswa'
+        ? `NIS ${currentUser.nis} • Kelas ${currentUser.kelas}`
+        : `Guru • ${currentUser.email}`;
+
+      document.getElementById('card-name').textContent = currentUser.full_name;
+      document.getElementById('card-nis').textContent = currentUser.role === 'siswa'
+        ? `NIS: ${currentUser.nis} • Kelas ${currentUser.kelas}`
+        : `NIP/Email: ${currentUser.email}`;
+      document.getElementById('prof-name').textContent = currentUser.full_name;
+      document.getElementById('prof-detail').textContent = currentUser.role === 'siswa'
+        ? `Akun Siswa • NIS ${currentUser.nis} • Kelas ${currentUser.kelas}`
+        : `Akun Guru • ${currentUser.email}`;
+
+      await loadAllData();
+      navigate('home');
+    }
+
+    async function loadAllData() {
+      const userKelas = currentUser.role === 'siswa' ? currentUser.kelas : 'VII-A';
+      const userNis = currentUser.role === 'siswa' ? currentUser.nis : '2026001';
+
+      let schedules = DEMO_DB.schedules;
+      let events = DEMO_DB.events;
+      let exams = DEMO_DB.exams;
+      let bills = DEMO_DB.bills;
+      let assignments = DEMO_DB.assignments;
+      let quizzes = DEMO_DB.quizzes;
+
+      if (sb) {
+        const [sRes, eRes, xRes, bRes, aRes, qRes] = await Promise.all([
+          sb.from('schedules').select('*'),
+          sb.from('academic_events').select('*'),
+          sb.from('exam_results').select('*').eq('nis', userNis),
+          sb.from('bills').select('*').eq('nis', userNis),
+          sb.from('assignments').select('*'),
+          sb.from('quizzes').select('*')
+        ]);
+        if (sRes.data?.length) schedules = sRes.data;
+        if (eRes.data?.length) events = eRes.data;
+        if (xRes.data?.length) exams = xRes.data;
+        if (bRes.data?.length) bills = bRes.data;
+        if (aRes.data?.length) assignments = aRes.data;
+        if (qRes.data?.length) quizzes = qRes.data;
+      }
+
+      window.APP_DATA = { schedules, events, exams, bills, assignments, quizzes, userKelas, userNis };
+      renderHome();
+      renderJadwal();
+      renderAgenda();
+      renderExams();
+      renderBills();
+      renderTugas();
+      renderQuiz();
+      renderAttendance();
+      renderGuruPanel();
+    }
+
+    function renderHome() {
+      const { schedules, events, bills, userKelas } = window.APP_DATA;
+      const unpaid = bills.find(b => b.status !== 'Lunas');
+      if (unpaid) {
+        document.getElementById('home-bill-amount').textContent = 'Rp ' + unpaid.nominal.toLocaleString('id-ID');
+        document.getElementById('home-bill-desc').textContent = unpaid.judul;
+      } else {
+        document.getElementById('home-bill-amount').textContent = 'Rp 0 (Lunas)';
+        document.getElementById('home-bill-desc').textContent = 'Tidak ada tagihan aktif';
+      }
+
+      const mySched = schedules.filter(s => currentUser.role === 'guru' || s.kelas === userKelas).slice(0, 2);
+      document.getElementById('home-schedule-preview').innerHTML = mySched.map(s => `
+        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="tag">${s.hari} • ${s.jam}</span>
+            <h4 style="margin:6px 0 2px;">${s.mapel}</h4>
+            <p style="font-size:12px; color:var(--text-muted);">${s.guru} (${s.kelas})</p>
+          </div>
+          <div style="font-weight:800; color:var(--primary); font-size:12px;">${s.ruang}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('home-agenda-preview').innerHTML = events.slice(0, 2).map(ev => `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between;">
+            <span class="tag">${ev.kategori}</span>
+            <span style="font-size:12px; font-weight:700; color:var(--primary);">${ev.tanggal}</span>
+          </div>
+          <h4 style="margin:6px 0 2px;">${ev.judul}</h4>
+          <p style="font-size:12px; color:var(--text-muted);">${ev.deskripsi}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderJadwal() {
+      const { schedules, userKelas } = window.APP_DATA;
+      document.getElementById('jadwal-subtitle').textContent = currentUser.role === 'siswa'
+        ? `Jadwal Khusus Kelas ${userKelas}`
+        : 'Semua Jadwal Kelas (Mode Guru)';
+      const filtered = schedules.filter(s =>
+        (currentUser.role === 'guru' || s.kelas === userKelas) &&
+        (selectedDay === 'Semua' || s.hari === selectedDay)
+      );
+      document.getElementById('jadwal-list').innerHTML = filtered.length ? filtered.map(s => `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between;">
+            <span class="tag">${s.hari} • ${s.kelas}</span>
+            <span style="font-size:12px; font-weight:700; color:var(--primary);">${s.jam}</span>
+          </div>
+          <h4 style="margin:8px 0 4px;">${s.mapel}</h4>
+          <p style="font-size:12px; color:var(--text-muted);">Pengajar: ${s.guru} • Ruang: ${s.ruang}</p>
+        </div>
+      `).join('') : '<div class="glass-card">Tidak ada jadwal pada hari ini.</div>';
+    }
+
+    function filterJadwal(day, el) {
+      selectedDay = day;
+      document.querySelectorAll('#day-chips .chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      renderJadwal();
+    }
+
+    function renderAgenda() {
+      document.getElementById('agenda-list').innerHTML = window.APP_DATA.events.map(ev => `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag">${ev.bulan} • ${ev.kategori}</span>
+            <strong style="font-size:12px; color:var(--primary);">${ev.tanggal}</strong>
+          </div>
+          <h4 style="margin:8px 0 4px;">${ev.judul}</h4>
+          <p style="font-size:12px; color:var(--text-muted);">${ev.deskripsi}</p>
+        </div>
+      `).join('');
+    }
+
+    function setExamFilter(sem, type) {
+      if (sem) {
+        selectedSemester = sem;
+        document.getElementById('sem-ganjil-btn').classList.toggle('active', sem === 'Ganjil');
+        document.getElementById('sem-genap-btn').classList.toggle('active', sem === 'Genap');
+      }
+      if (type) {
+        selectedExamType = type;
+        document.getElementById('type-uts-btn').classList.toggle('active', type === 'UTS');
+        document.getElementById('type-uas-btn').classList.toggle('active', type === 'UAS');
+      }
+      renderExams();
+    }
+
+    function renderExams() {
+      const list = window.APP_DATA.exams.filter(x => x.semester === selectedSemester && x.jenis_ujian === selectedExamType);
+      const avg = list.length ? (list.reduce((a, b) => a + b.nilai, 0) / list.length).toFixed(1) : 0;
+      document.getElementById('exam-avg').textContent = avg;
+      document.getElementById('exam-grade').textContent = avg >= 90 ? 'A (Mumtaz)' : avg >= 80 ? 'B (Jayyid)' : avg > 0 ? 'C (Cukup)' : '-';
+
+      document.getElementById('exam-list').innerHTML = list.length ? list.map(x => `
+        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="tag">${x.semester} • ${x.jenis_ujian}</span>
+            <h4 style="margin:6px 0 2px;">${x.mapel}</h4>
+            <p style="font-size:12px; color:var(--text-muted);">KKM: ${x.kkm} • Status: ${x.nilai >= x.kkm ? 'Tuntas' : 'Remedial'}</p>
+          </div>
+          <div style="font-size:24px; font-weight:800; color:var(--primary);">${x.nilai}</div>
+        </div>
+      `).join('') : '<div class="glass-card">Belum ada data nilai untuk filter ini.</div>';
+    }
+
+    function renderBills() {
+      document.getElementById('bills-list').innerHTML = window.APP_DATA.bills.map(b => `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag ${b.status === 'Lunas' ? 'lunas' : 'belum'}">${b.status}</span>
+            <span style="font-size:12px; color:var(--text-muted);">${b.bulan}</span>
+          </div>
+          <h4 style="margin:8px 0 4px;">${b.judul}</h4>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${b.keterangan}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:17px;">Rp ${b.nominal.toLocaleString('id-ID')}</strong>
+            ${b.status !== 'Lunas' ? `<button class="chip active" onclick="confirmBillPayment()">Konfirmasi Bayar</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function confirmBillPayment() {
+      showToast('Konfirmasi pembayaran terkirim ke Tata Usaha!');
+    }
+
+    function renderTugas() {
+      document.getElementById('tugas-list').innerHTML = window.APP_DATA.assignments.map(t => `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between;">
+            <span class="tag">${t.mapel} • ${t.tipe}</span>
+            <span style="font-size:12px; color:var(--danger); font-weight:700;">Batas: ${t.deadline}</span>
+          </div>
+          <h4 style="margin:8px 0 4px;">${t.judul}</h4>
+          <p style="font-size:12px; color:var(--text-muted);">${t.deskripsi}</p>
+        </div>
+      `).join('');
+    }
+
+    let quizScore = 0, quizIdx = 0;
+    function renderQuiz() {
+      const qList = window.APP_DATA.quizzes;
+      const box = document.getElementById('quiz-container');
+      if (quizIdx >= qList.length) {
+        box.innerHTML = `
+          <div class="glass-card" style="text-align:center; padding:28px;">
+            <h2>🎉 Latihan Selesai!</h2>
+            <p style="margin:10px 0; font-size:15px;">Skor Kamu: <strong>${Math.round((quizScore / qList.length) * 100)}</strong> (${quizScore}/${qList.length} benar)</p>
+            <button class="btn-primary" onclick="quizIdx=0; quizScore=0; renderQuiz();">Ulangi Latihan Soal</button>
+          </div>`;
+        return;
+      }
+      const q = qList[quizIdx];
+      box.innerHTML = `
+        <div class="glass-card">
+          <span class="tag">${q.mapel} • Soal ${quizIdx + 1} dari ${qList.length}</span>
+          <h4 style="margin:12px 0 16px; line-height:1.5;">${q.pertanyaan}</h4>
+          ${['A', 'B', 'C', 'D'].map(opt => `
+            <button class="form-input" style="text-align:left; margin-bottom:10px; cursor:pointer; font-weight:600;"
+              onclick="answerQuiz('${opt}', '${q.jawaban_benar}')">
+              ${opt}. ${q['opsi_' + opt.toLowerCase()]}
+            </button>
+          `).join('')}
+        </div>`;
+    }
+
+    function answerQuiz(chosen, correct) {
+      if (chosen === correct) { quizScore++; showToast('✅ Jawaban Benar!'); }
+      else { showToast('❌ Kurang tepat, jawaban: ' + correct); }
+      quizIdx++;
+      renderQuiz();
+    }
+
+    function renderAttendance() {
+      document.getElementById('attendance-list').innerHTML = DEMO_DB.attendance.map(a => `
+        <div class="glass-card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong>${a.tanggal}</strong>
+            <div style="font-size:12px; color:var(--text-muted);">${a.catatan}</div>
+          </div>
+          <span class="tag lunas">${a.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function submitQuickAttendance() {
+      DEMO_DB.attendance.unshift({ tanggal: 'Hari Ini', status: 'Hadir', catatan: 'Tercatat via Aplikasi PWA' });
+      renderAttendance();
+      showToast('Kehadiran hari ini berhasil dicatat!');
+    }
+
+    function renderGuruPanel() {
+      const box = document.getElementById('guru-panel-content');
+      if (currentUser.role !== 'guru') {
+        box.innerHTML = `<div class="glass-card"><h4>🔒 Khusus Akun Guru</h4><p style="font-size:13px; color:var(--text-muted); margin-top:6px;">Login menggunakan email guru untuk menambah jadwal, nilai ujian, dan agenda sekolah.</p></div>`;
+        return;
+      }
+      box.innerHTML = `
+        <div class="glass-card">
+          <h4 style="margin-bottom:12px;">➕ Input Nilai Ujian Siswa</h4>
+          <form onsubmit="guruAddExam(event)">
+            <div class="form-group"><input id="g-nis" class="form-input" placeholder="NIS Siswa (Contoh: 2026001)" required /></div>
+            <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <select id="g-sem" class="form-select"><option value="Ganjil">Ganjil</option><option value="Genap">Genap</option></select>
+              <select id="g-type" class="form-select"><option value="UTS">UTS</option><option value="UAS">UAS</option></select>
+            </div>
+            <div class="form-group"><input id="g-mapel" class="form-input" placeholder="Mata Pelajaran" required /></div>
+            <div class="form-group"><input id="g-nilai" type="number" class="form-input" placeholder="Nilai (0-100)" required /></div>
+            <button type="submit" class="btn-primary">Simpan Nilai ke Database</button>
+          </form>
+        </div>`;
+    }
+
+    async function guruAddExam(e) {
+      e.preventDefault();
+      const row = {
+        nis: document.getElementById('g-nis').value.trim(),
+        semester: document.getElementById('g-sem').value,
+        jenis_ujian: document.getElementById('g-type').value,
+        mapel: document.getElementById('g-mapel').value.trim(),
+        nilai: parseInt(document.getElementById('g-nilai').value, 10),
+        kkm: 75
+      };
+      if (sb) await sb.from('exam_results').insert([row]);
+      DEMO_DB.exams.push(row);
+      showToast('Nilai berhasil disimpan!');
+      e.target.reset();
+    }
+
+    // ==========================================================
+    // 6. NAVIGASI SPA & PWA INSTALL HANDLER
+    // ==========================================================
+    function navigate(pageId) {
+      const pages = ['home', 'jadwal', 'agenda', 'nilai', 'latsol', 'presensi', 'tugas', 'tagihan', 'library', 'guru-panel', 'card', 'profile'];
+      pages.forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
+      document.getElementById('page-' + pageId).classList.remove('hidden');
+
+      ['home', 'jadwal', 'nilai', 'profile'].forEach(n => {
+        const btn = document.getElementById('nav-' + n);
+        if (btn) btn.classList.toggle('active', n === pageId);
+      });
+      window.scrollTo(0, 0);
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-pwa-btn').classList.remove('hidden');
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return showToast('Gunakan menu browser "Add to Home Screen / Install App"');
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('install-pwa-btn').classList.add('hidden');
+    }
+
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('install-pwa-btn').classList.add('hidden');
+      document.getElementById('pwa-guide-box')?.classList.add('hidden');
+      showToast('Aplikasi ISLAMIYAH berhasil di-install!');
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    // Auto-login jika sesi tersimpan
+    const savedUser = localStorage.getItem('islamiyah_user');
+    if (savedUser) {
+      currentUser = JSON.parse(savedUser);
+      enterApp();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="macGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#0EA5E9" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="glassShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="115" fill="url(#macGrad)" />
+  <path d="M0 115C0 51.487 51.487 0 115 0h282c63.513 0 115 51.487 115 115v120C380 280 130 280 0 235V115z" fill="url(#glassShine)" />
+  
+  <path d="M256 96C195 135 156 178 156 238v96c0 45 100 82 100 82s100-37 100-82v-96c0-60-39-103-100-142z" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-linejoin="round" />
+  
+  <path d="M196 276c22-12 44-10 60 4 16-14 38-16 60-4v54c-22-12-44-10-60 4-16-14-38-16-60-4v-54z" fill="#FFFFFF" />
+  <circle cx="256" cy="195" r="20" fill="#FDE047" />
+</svg>
