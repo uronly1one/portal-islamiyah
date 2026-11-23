@@ -34,24 +34,23 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--mac-bg); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; }
+    html, body { background: var(--mac-bg); color: var(--text-main); min-height: 100dvh; }
+    body { display: flex; justify-content: center; }
 
-    /* App Shell Responsif (Tanpa overflow-x:hidden agar position:sticky bekerja mulus di semua browser) */
+    /* PENTING: Jangan beri backdrop-filter/transform/filter pada .app-shell karena CSS backdrop-filter membuat containing block baru yang merusak position:fixed pada footer (.bottom-nav) di Chrome/Android/Safari! */
     .app-shell {
       width: 100%;
       max-width: 480px;
-      min-height: 100vh;
-      background: rgba(248, 250, 252, 0.74);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      min-height: 100dvh;
+      background: rgba(248, 250, 252, 0.86);
       position: relative;
-      padding-bottom: 98px;
+      padding-bottom: 104px;
       box-shadow: 0 0 60px rgba(15, 23, 42, 0.08);
     }
 
     /* ================= LOGIN & REGISTER ================= */
     .auth-screen {
-      min-height: 100vh;
+      min-height: 100dvh;
       padding: 36px 24px;
       display: flex;
       flex-direction: column;
@@ -73,6 +72,7 @@
       background: var(--glass);
       border: 1px solid var(--glass-border);
       backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 28px;
       padding: 24px;
       box-shadow: var(--shadow-soft);
@@ -255,24 +255,26 @@
     .sub-banner h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
     .sub-banner p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    /* STICKY FOOTER / BOTTOM NAVIGATION (5 SLOT ALA GOPAY DI SEMUA HALAMAN) */
+    /* FIXED FOOTER / BOTTOM NAVIGATION (BENAR-BENAR DIAM & MENEMPEL DI BAWAH LAYAR) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
+      right: 0;
+      margin: 0 auto;
       width: 100%;
       max-width: 480px;
-      height: 74px;
-      background: rgba(255, 255, 255, 0.94);
+      height: calc(74px + env(safe-area-inset-bottom, 0px));
+      padding: 0 6px calc(6px + env(safe-area-inset-bottom, 0px));
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(226, 232, 240, 0.85);
+      border-top: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 -8px 24px -8px rgba(15, 23, 42, 0.1);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       align-items: center;
-      padding: 0 6px 6px;
-      z-index: 50;
+      z-index: 90;
     }
     .nav-btn {
       background: none; border: none; display: flex; flex-direction: column;
@@ -665,37 +667,37 @@
           <button class="btn-primary" style="background: var(--danger);" onclick="logout()">Keluar dari Akun</button>
         </div>
       </div>
-
-      <!-- STICKY BOTTOM NAVIGATION BAR (5 SLOT ALA GOPAY DI SEMUA HALAMAN) -->
-      <nav class="bottom-nav">
-        <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9l-8-6z"/></svg>
-          <span>Beranda</span>
-        </button>
-        <button class="nav-btn" id="nav-jadwal" onclick="navigate('jadwal')">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
-          <span>Jadwal</span>
-        </button>
-
-        <!-- TOMBOL TENGAH MENONJOL (LATSOL / CBT) -->
-        <div class="nav-center-wrap">
-          <button class="nav-center-btn" onclick="navigate('latsol')" title="Latihan Soal">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </button>
-          <span class="nav-center-label">Latsol</span>
-        </div>
-
-        <button class="nav-btn" id="nav-nilai" onclick="navigate('nilai')">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-          <span>Nilai</span>
-        </button>
-        <button class="nav-btn" id="nav-profile" onclick="navigate('profile')">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-          <span>Akun</span>
-        </button>
-      </nav>
     </div>
   </div>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR (DI LUAR .app-shell AGAR SELALU MENEMPEL DI BAWAH VIEWPORT) -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9l-8-6z"/></svg>
+      <span>Beranda</span>
+    </button>
+    <button class="nav-btn" id="nav-jadwal" onclick="navigate('jadwal')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+      <span>Jadwal</span>
+    </button>
+
+    <!-- TOMBOL TENGAH MENONJOL (LATSOL / CBT) -->
+    <div class="nav-center-wrap">
+      <button class="nav-center-btn" onclick="navigate('latsol')" title="Latihan Soal">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
+      <span class="nav-center-label">Latsol</span>
+    </div>
+
+    <button class="nav-btn" id="nav-nilai" onclick="navigate('nilai')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      <span>Nilai</span>
+    </button>
+    <button class="nav-btn" id="nav-profile" onclick="navigate('profile')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <span>Akun</span>
+    </button>
+  </nav>
 
   <script>
     // ==========================================================
@@ -869,6 +871,7 @@
       localStorage.removeItem('islamiyah_user');
       currentUser = null;
       document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('bottom-nav').classList.add('hidden');
       document.getElementById('auth-view').classList.remove('hidden');
     }
 
@@ -878,6 +881,7 @@
     async function enterApp() {
       document.getElementById('auth-view').classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
+      document.getElementById('bottom-nav').classList.remove('hidden');
 
       document.getElementById('hdr-avatar').textContent = currentUser.full_name.charAt(0).toUpperCase();
       document.getElementById('hdr-title').textContent = currentUser.full_name;
@@ -1171,14 +1175,13 @@
     }
 
     // ==========================================================
-    // 6. NAVIGASI SPA (GLOBAL STICKY HEADER + FOOTER) & PWA
+    // 6. NAVIGASI SPA (GLOBAL STICKY HEADER + FIXED FOOTER) & PWA
     // ==========================================================
     function navigate(pageId) {
       const pages = ['home', 'jadwal', 'agenda', 'nilai', 'latsol', 'presensi', 'tugas', 'tagihan', 'library', 'guru-panel', 'card', 'profile'];
       pages.forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
       document.getElementById('page-' + pageId).classList.remove('hidden');
 
-      // Update sticky header agar konsisten di seluruh 12 halaman
       const isHome = pageId === 'home';
       document.getElementById('global-back-btn').classList.toggle('hidden', isHome);
       document.getElementById('hdr-avatar').classList.toggle('hidden', !isHome);
