@@ -21,8 +21,8 @@
       --hero-grad: linear-gradient(135deg, #1e3a8a 0%, #2563eb 48%, #0ea5e9 100%);
       --card-grad: linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #06b6d4 100%);
       --accent-grad: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
-      --glass: rgba(255, 255, 255, 0.82);
-      --glass-border: rgba(255, 255, 255, 0.65);
+      --glass: rgba(255, 255, 255, 0.84);
+      --glass-border: rgba(255, 255, 255, 0.68);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --primary: #2563eb;
@@ -36,18 +36,17 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--mac-bg); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; }
 
-    /* App Shell Responsif (Mobile First & Desktop Rapi) */
+    /* App Shell Responsif (Tanpa overflow-x:hidden agar position:sticky bekerja mulus di semua browser) */
     .app-shell {
       width: 100%;
       max-width: 480px;
       min-height: 100vh;
-      background: rgba(248, 250, 252, 0.72);
+      background: rgba(248, 250, 252, 0.74);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       position: relative;
-      padding-bottom: 92px;
+      padding-bottom: 98px;
       box-shadow: 0 0 60px rgba(15, 23, 42, 0.08);
-      overflow-x: hidden;
     }
 
     /* ================= LOGIN & REGISTER ================= */
@@ -106,35 +105,61 @@
     .auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); }
     .auth-switch span { color: var(--primary); font-weight: 700; cursor: pointer; }
 
-    /* ================= GOPAY-STYLE HEADER & HERO ================= */
-    .gopay-header {
+    /* ================= STICKY GLOBAL TOP HEADER (BERLAKU DI SEMUA HALAMAN) ================= */
+    .sticky-app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
       background: var(--hero-grad);
-      padding: 20px 20px 68px;
+      padding: 12px 18px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 25px -10px rgba(15, 23, 42, 0.35);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: 12px; border: none; flex-shrink: 0;
+      background: rgba(255,255,255,0.2); color: #fff; font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .back-btn:active { transform: scale(0.93); }
+    .avatar-circle {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,255,255,0.22); border: 1.5px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;
+      cursor: pointer;
+    }
+    .header-info { min-width: 0; }
+    .header-title {
+      font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .badge-kelas {
+      display: inline-block; font-size: 10.5px; padding: 2px 8px; border-radius: 99px;
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); font-weight: 600; margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 210px;
+    }
+    .top-actions { display: flex; gap: 7px; flex-shrink: 0; }
+    .icon-pill {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.18); color: #fff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; transition: 0.2s;
+    }
+    .icon-pill:active { transform: scale(0.92); background: rgba(255,255,255,0.32); }
+
+    /* HERO EXTENSION KHUSUS BERANDA */
+    .gopay-hero-bg {
+      background: var(--hero-grad);
+      padding: 6px 18px 66px;
       border-bottom-left-radius: 32px;
       border-bottom-right-radius: 32px;
       color: #fff;
-      position: relative;
-    }
-    .top-bar { display: flex; justify-content: space-between; align-items: center; }
-    .user-pill { display: flex; align-items: center; gap: 10px; }
-    .avatar-circle {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(255,255,255,0.22); border: 1.5px solid rgba(255,255,255,0.5);
-      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;
-    }
-    .badge-kelas {
-      display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 99px;
-      background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); font-weight: 600; margin-top: 2px;
-    }
-    .top-actions { display: flex; gap: 8px; }
-    .icon-pill {
-      width: 38px; height: 38px; border-radius: 50%; border: none;
-      background: rgba(255,255,255,0.18); color: #fff; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 16px;
     }
 
     /* KARTU TAGIHAN BULANAN (PLEK-KETIPLEK SALDO GOPAY) */
-    .gopay-wallet-wrap { padding: 0 18px; margin-top: -50px; position: relative; z-index: 5; }
+    .gopay-wallet-wrap { padding: 0 18px; margin-top: -54px; position: relative; z-index: 5; }
     .gopay-wallet-card {
       background: var(--card-grad);
       border-radius: 24px;
@@ -154,6 +179,7 @@
       padding: 12px 14px;
       flex: 1.15;
       box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      cursor: pointer;
     }
     .wallet-brand { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
     .wallet-amount { font-size: 18px; font-weight: 800; margin: 4px 0 2px; color: #0f172a; }
@@ -218,26 +244,35 @@
     .tag.lunas { background: #d1fae5; color: #047857; }
     .tag.belum { background: #fee2e2; color: #b91c1c; }
 
-    /* PAGE HEADER (SUB-PAGES) */
-    .sub-header {
-      background: var(--hero-grad); color: #fff;
-      padding: 20px 18px; border-bottom-left-radius: 26px; border-bottom-right-radius: 26px;
-      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    /* SUB-PAGE BANNER RINGKAS DI BAWAH STICKY HEADER */
+    .sub-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(14, 165, 233, 0.12));
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 18px;
+      padding: 12px 15px;
+      margin-bottom: 14px;
     }
-    .back-btn {
-      width: 36px; height: 36px; border-radius: 12px; border: none;
-      background: rgba(255,255,255,0.2); color: #fff; font-size: 18px; cursor: pointer;
-    }
+    .sub-banner h3 { font-size: 16px; font-weight: 800; color: #0f172a; }
+    .sub-banner p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    /* BOTTOM NAVIGATION (5 SLOT ALA GOPAY DENGAN TOMBOL TENGAH BESAR) */
+    /* STICKY FOOTER / BOTTOM NAVIGATION (5 SLOT ALA GOPAY DI SEMUA HALAMAN) */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 480px; height: 74px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(226, 232, 240, 0.8);
-      display: grid; grid-template-columns: repeat(5, 1fr); align-items: center;
-      padding: 0 6px 6px; z-index: 50;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 74px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(226, 232, 240, 0.85);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      padding: 0 6px 6px;
+      z-index: 50;
     }
     .nav-btn {
       background: none; border: none; display: flex; flex-direction: column;
@@ -279,7 +314,7 @@
 
     .hidden { display: none !important; }
     .toast {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 72px; left: 50%; transform: translateX(-50%);
       background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 99px;
       font-size: 13px; font-weight: 600; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
@@ -343,25 +378,26 @@
     <!-- ==================== MAIN APP (SETELAH LOGIN) ==================== -->
     <div id="main-app" class="hidden">
 
-      <!-- 2. BERANDA (GOPAY STYLE) -->
-      <div id="page-home">
-        <div class="gopay-header">
-          <div class="top-bar">
-            <div class="user-pill">
-              <div class="avatar-circle" id="hdr-avatar">A</div>
-              <div>
-                <div style="font-size: 12px; opacity: 0.85;">Assalamu'alaikum,</div>
-                <div style="font-size: 16px; font-weight: 800;" id="hdr-name">Ahmad Zaki</div>
-                <span class="badge-kelas" id="hdr-badge">Kelas VII-A • TA 2026/2027</span>
-              </div>
-            </div>
-            <div class="top-actions">
-              <button id="install-pwa-btn" class="icon-pill hidden" onclick="installPWA()" title="Install Aplikasi">📲</button>
-              <button class="icon-pill" onclick="navigate('agenda')" title="Agenda Sekolah">🔔</button>
-              <button class="icon-pill" onclick="navigate('profile')" title="Profil">⚙️</button>
-            </div>
+      <!-- STICKY TOP HEADER GLOBAL (MENEMPEL DI SEMUA 12 HALAMAN) -->
+      <header class="sticky-app-header">
+        <div class="top-bar-left">
+          <button id="global-back-btn" class="back-btn hidden" onclick="navigate('home')" title="Kembali ke Beranda">←</button>
+          <div class="avatar-circle" id="hdr-avatar" onclick="navigate('card')">A</div>
+          <div class="header-info">
+            <div class="header-title" id="hdr-title">Ahmad Zaki</div>
+            <span class="badge-kelas" id="hdr-badge">Kelas VII-A • TA 2026/2027</span>
           </div>
         </div>
+        <div class="top-actions">
+          <button id="install-pwa-btn" class="icon-pill hidden" onclick="installPWA()" title="Install Aplikasi">📲</button>
+          <button class="icon-pill" onclick="navigate('agenda')" title="Agenda Sekolah">🔔</button>
+          <button class="icon-pill" onclick="navigate('profile')" title="Pengaturan Akun">⚙️</button>
+        </div>
+      </header>
+
+      <!-- 2. BERANDA (GOPAY STYLE) -->
+      <div id="page-home">
+        <div class="gopay-hero-bg"></div>
 
         <!-- KARTU TAGIHAN BULANAN (PENGGANTI SALDO GOPAY) -->
         <div class="gopay-wallet-wrap">
@@ -447,14 +483,11 @@
 
       <!-- 3. HALAMAN JADWAL PELAJARAN KELAS -->
       <div id="page-jadwal" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Jadwal Pelajaran</h3>
-            <p style="font-size:12px; opacity:0.85;" id="jadwal-subtitle">Kelas VII-A</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>📅 Jadwal Pelajaran</h3>
+            <p id="jadwal-subtitle">Kelas VII-A</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="chip-row" id="day-chips">
             <button class="chip active" onclick="filterJadwal('Semua', this)">Semua Hari</button>
             <button class="chip" onclick="filterJadwal('Senin', this)">Senin</button>
@@ -469,26 +502,22 @@
 
       <!-- 4. HALAMAN KALENDER KEGIATAN 1 TAHUN AJARAN -->
       <div id="page-agenda" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Kalender Kegiatan Sekolah</h3>
-            <p style="font-size:12px; opacity:0.85;">Tahun Ajaran 2026/2027 (1 Tahun Penuh)</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>🗓️ Kalender Kegiatan Sekolah</h3>
+            <p>Tahun Ajaran 2026/2027 (1 Tahun Penuh)</p>
           </div>
+          <div id="agenda-list"></div>
         </div>
-        <div class="section-wrap" style="padding-top:0;" id="agenda-list"></div>
       </div>
 
       <!-- 5. HALAMAN HASIL UJIAN (UTS & UAS - GANJIL & GENAP) -->
       <div id="page-nilai" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Hasil Evaluasi & Ujian</h3>
-            <p style="font-size:12px; opacity:0.85;">Pantauan Nilai UTS & UAS</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>📊 Hasil Evaluasi & Ujian</h3>
+            <p>Pantauan Nilai UTS & UAS Semester Ganjil / Genap</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="seg-control">
             <button id="sem-ganjil-btn" class="seg-btn active" onclick="setExamFilter('Ganjil', null)">Semester Ganjil</button>
             <button id="sem-genap-btn" class="seg-btn" onclick="setExamFilter('Genap', null)">Semester Genap</button>
@@ -513,26 +542,22 @@
 
       <!-- 6. HALAMAN LATIHAN SOAL / CBT (TOMBOL TENGAH BESAR) -->
       <div id="page-latsol" class="hidden">
-        <div class="sub-header" style="background: var(--accent-grad);">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Latihan Soal & Tryout CBT</h3>
-            <p style="font-size:12px; opacity:0.9;">Persiapan UTS & UAS SMP Islamiyah</p>
+        <div class="section-wrap">
+          <div class="sub-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(59, 130, 246, 0.14));">
+            <h3>✍️ Latihan Soal & Tryout CBT</h3>
+            <p>Persiapan UTS & UAS SMP Islamiyah</p>
           </div>
+          <div id="quiz-container"></div>
         </div>
-        <div class="section-wrap" style="padding-top:0;" id="quiz-container"></div>
       </div>
 
       <!-- 7. HALAMAN PRESENSI -->
       <div id="page-presensi" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Presensi Kehadiran</h3>
-            <p style="font-size:12px; opacity:0.85;">Rekap & Konfirmasi Kehadiran</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>✋ Presensi Kehadiran</h3>
+            <p>Rekap & Konfirmasi Kehadiran Harian</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="glass-card" style="display:grid; grid-template-columns:repeat(3,1fr); text-align:center;">
             <div><strong style="font-size:20px; color:var(--success);">96%</strong><div style="font-size:11px; color:var(--text-muted);">Hadir</div></div>
             <div><strong style="font-size:20px; color:var(--warning);">1</strong><div style="font-size:11px; color:var(--text-muted);">Izin/Sakit</div></div>
@@ -545,38 +570,33 @@
 
       <!-- 8. HALAMAN TUGAS & LMS -->
       <div id="page-tugas" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Tugas & Materi Kelas</h3>
-            <p style="font-size:12px; opacity:0.85;">Learning Management System</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>📚 Tugas & Materi Kelas</h3>
+            <p>Learning Management System SMP Islamiyah</p>
           </div>
+          <div id="tugas-list"></div>
         </div>
-        <div class="section-wrap" style="padding-top:0;" id="tugas-list"></div>
       </div>
 
       <!-- 9. HALAMAN TAGIHAN NON-SPP -->
       <div id="page-tagihan" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Rincian Tagihan Sekolah</h3>
-            <p style="font-size:12px; opacity:0.85;">Seragam, Buku Paket & Kegiatan</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>💳 Rincian Tagihan Sekolah</h3>
+            <p>Seragam, Buku Paket & Kegiatan Non-SPP</p>
           </div>
+          <div id="bills-list"></div>
         </div>
-        <div class="section-wrap" style="padding-top:0;" id="bills-list"></div>
       </div>
 
       <!-- 10. HALAMAN E-LIBRARY -->
       <div id="page-library" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">E-Library Islamiyah</h3>
-            <p style="font-size:12px; opacity:0.85;">Perpustakaan Digital & Modul</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>📖 E-Library Islamiyah</h3>
+            <p>Perpustakaan Digital & Modul Pembelajaran</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="glass-card">
             <span class="tag">Buku Paket</span>
             <h4 style="margin:8px 0 4px;">Pendidikan Agama Islam & Budi Pekerti VII</h4>
@@ -594,26 +614,22 @@
 
       <!-- 11. HALAMAN PANEL GURU (ADMIN INPUT DATA) -->
       <div id="page-guru-panel" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Panel Akademik Guru</h3>
-            <p style="font-size:12px; opacity:0.85;">Input Nilai Ujian, Agenda & Tagihan</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>🛠️ Panel Akademik Guru</h3>
+            <p>Input Nilai Ujian, Agenda & Data Akademik</p>
           </div>
+          <div id="guru-panel-content"></div>
         </div>
-        <div class="section-wrap" style="padding-top:0;" id="guru-panel-content"></div>
       </div>
 
       <!-- 12. HALAMAN KARTU PELAJAR & PROFIL -->
       <div id="page-card" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Kartu Identitas Digital</h3>
-            <p style="font-size:12px; opacity:0.85;">SMP ISLAMIYAH</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>🪪 Kartu Identitas Digital</h3>
+            <p>Kartu Resmi Warga Sekolah SMP ISLAMIYAH</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="id-card">
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px;">
               <img src="./icon.svg" style="width:44px; height:44px; border-radius:12px;" />
@@ -630,14 +646,11 @@
       </div>
 
       <div id="page-profile" class="hidden">
-        <div class="sub-header">
-          <button class="back-btn" onclick="navigate('home')">←</button>
-          <div>
-            <h3 style="font-size:18px;">Akun & Pengaturan</h3>
-            <p style="font-size:12px; opacity:0.85;">Portal SMP ISLAMIYAH</p>
+        <div class="section-wrap">
+          <div class="sub-banner">
+            <h3>⚙️ Akun & Pengaturan</h3>
+            <p>Informasi Profil & Instalasi Aplikasi PWA</p>
           </div>
-        </div>
-        <div class="section-wrap" style="padding-top:0;">
           <div class="glass-card">
             <h4 id="prof-name">Nama Pengguna</h4>
             <p style="font-size:13px; color:var(--text-muted); margin-top:4px;" id="prof-detail">Detail Akun</p>
@@ -645,15 +658,15 @@
           <div class="glass-card" id="pwa-guide-box">
             <h4>📲 Install ke Home Screen (Android / Windows)</h4>
             <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
-              • <strong>Android (Chrome):</strong> Ketuk titik tiga (⋮) di pojok kanan atas browser $\rightarrow$ pilih <em>"Tambahkan ke Layar Utama / Install App"</em>.<br/>
-              • <strong>Windows (Edge/Chrome):</strong> Klik ikon komputer/tambah (+) di sisi kanan kolom alamat URL $\rightarrow$ klik <em>Install</em>.
+              • <strong>Android (Chrome):</strong> Ketuk titik tiga (⋮) di pojok kanan atas browser → pilih <em>"Tambahkan ke Layar Utama / Install App"</em>.<br/>
+              • <strong>Windows (Edge/Chrome):</strong> Klik ikon komputer/tambah (+) di sisi kanan kolom alamat URL → klik <em>Install</em>.
             </p>
           </div>
           <button class="btn-primary" style="background: var(--danger);" onclick="logout()">Keluar dari Akun</button>
         </div>
       </div>
 
-      <!-- BOTTOM NAVIGATION BAR (5 SLOT ALA GOPAY) -->
+      <!-- STICKY BOTTOM NAVIGATION BAR (5 SLOT ALA GOPAY DI SEMUA HALAMAN) -->
       <nav class="bottom-nav">
         <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9l-8-6z"/></svg>
@@ -686,7 +699,7 @@
 
   <script>
     // ==========================================================
-    // 1. KONFIGURASI SUPABASE (GANTI DENGAN PUNYA KAMU)
+    // 1. KONFIGURASI SUPABASE (PUNYA KAMU DARI index_2.html)
     // ==========================================================
     const SUPABASE_URL = 'https://kpftnxrrughnnlizzdjl.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZnRueHJydWdobm5saXp6ZGpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTk1NDIsImV4cCI6MjExMDk3NTU0Mn0.RwW1VCRzDJeR72EMg1KnFbgqF_8Xh80fdQ2lKnu5g6s';
@@ -758,6 +771,21 @@
     let selectedSemester = 'Ganjil';
     let selectedExamType = 'UTS';
     let selectedDay = 'Semua';
+
+    const PAGE_TITLES = {
+      home: null, // Pakai nama user
+      jadwal: 'Jadwal Pelajaran',
+      agenda: 'Kalender Akademik',
+      nilai: 'Hasil Ujian (UTS/UAS)',
+      latsol: 'Latihan Soal CBT',
+      presensi: 'Presensi Kehadiran',
+      tugas: 'Tugas & Materi',
+      tagihan: 'Tagihan Sekolah',
+      library: 'E-Library Digital',
+      'guru-panel': 'Panel Akademik Guru',
+      card: 'Kartu Identitas Digital',
+      profile: 'Akun & Pengaturan'
+    };
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -852,7 +880,7 @@
       document.getElementById('main-app').classList.remove('hidden');
 
       document.getElementById('hdr-avatar').textContent = currentUser.full_name.charAt(0).toUpperCase();
-      document.getElementById('hdr-name').textContent = currentUser.full_name;
+      document.getElementById('hdr-title').textContent = currentUser.full_name;
       document.getElementById('hdr-badge').textContent = currentUser.role === 'siswa'
         ? `NIS ${currentUser.nis} • Kelas ${currentUser.kelas}`
         : `Guru • ${currentUser.email}`;
@@ -1143,12 +1171,21 @@
     }
 
     // ==========================================================
-    // 6. NAVIGASI SPA & PWA INSTALL HANDLER
+    // 6. NAVIGASI SPA (GLOBAL STICKY HEADER + FOOTER) & PWA
     // ==========================================================
     function navigate(pageId) {
       const pages = ['home', 'jadwal', 'agenda', 'nilai', 'latsol', 'presensi', 'tugas', 'tagihan', 'library', 'guru-panel', 'card', 'profile'];
       pages.forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
       document.getElementById('page-' + pageId).classList.remove('hidden');
+
+      // Update sticky header agar konsisten di seluruh 12 halaman
+      const isHome = pageId === 'home';
+      document.getElementById('global-back-btn').classList.toggle('hidden', isHome);
+      document.getElementById('hdr-avatar').classList.toggle('hidden', !isHome);
+      document.getElementById('hdr-title').textContent = isHome ? currentUser.full_name : PAGE_TITLES[pageId];
+      document.getElementById('hdr-badge').textContent = isHome
+        ? (currentUser.role === 'siswa' ? `NIS ${currentUser.nis} • Kelas ${currentUser.kelas}` : `Guru • ${currentUser.email}`)
+        : `${currentUser.full_name} • ISLAMIYAH`;
 
       ['home', 'jadwal', 'nilai', 'profile'].forEach(n => {
         const btn = document.getElementById('nav-' + n);
@@ -1157,11 +1194,29 @@
       window.scrollTo(0, 0);
     }
 
+    function isAppInstalled() {
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        try { localStorage.setItem('islamiyah_installed', '1'); } catch (e) {}
+        return true;
+      }
+      try {
+        if (localStorage.getItem('islamiyah_installed') === '1') return true;
+      } catch (e) {}
+      return false;
+    }
+
+    if (isAppInstalled()) {
+      document.getElementById('pwa-guide-box')?.classList.add('hidden');
+    }
+
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      document.getElementById('install-pwa-btn').classList.remove('hidden');
+      try { localStorage.removeItem('islamiyah_installed'); } catch (err) {}
+      if (!isAppInstalled()) {
+        document.getElementById('install-pwa-btn').classList.remove('hidden');
+      }
     });
 
     async function installPWA() {
@@ -1173,6 +1228,7 @@
     }
 
     window.addEventListener('appinstalled', () => {
+      try { localStorage.setItem('islamiyah_installed', '1'); } catch (e) {}
       document.getElementById('install-pwa-btn').classList.add('hidden');
       document.getElementById('pwa-guide-box')?.classList.add('hidden');
       showToast('Aplikasi ISLAMIYAH berhasil di-install!');
