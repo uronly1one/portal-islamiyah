@@ -855,7 +855,7 @@
           <button type="submit" id="auth-submit-btn" class="btn-primary">Masuk Portal ISLAMIYAH</button>
         </form>
 
-        <div class="auth-switch">
+        <div class="auth-switch" id="auth-switch-wrap">
           <p id="auth-toggle-text">Belum punya akun? <span onclick="toggleAuthMode()">Daftar Sekarang</span></p>
         </div>
       </div>
@@ -888,9 +888,10 @@
       <div id="page-home">
         <div class="gopay-hero-bg"></div>
 
-        <!-- KARTU TAGIHAN BULANAN -->
+        <!-- KARTU TAGIHAN (SISWA) / KINERJA JAM AJAR SELESAI (GURU) -->
         <div class="gopay-wallet-wrap">
-          <div class="gopay-wallet-card">
+          <!-- MODE SISWA: TAGIHAN SEKOLAH -->
+          <div class="gopay-wallet-card" id="home-card-siswa">
             <div class="wallet-balance-box" onclick="navigate('tagihan')">
               <div class="wallet-brand">💳 Tagihan Sekolah</div>
               <div class="wallet-amount" id="home-bill-amount">Rp 185.000</div>
@@ -908,6 +909,29 @@
               <button class="w-act" onclick="navigate('tagihan')">
                 <div class="w-act-icon">🕒</div>
                 <span>Riwayat</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- MODE GURU: KINERJA (1 KATA KEREN - JAM AJAR SELESAI HARI INI & SYARAT E-BOOK) -->
+          <div class="gopay-wallet-card hidden" id="home-card-guru">
+            <div class="wallet-balance-box" onclick="navigate('presensi')">
+              <div class="wallet-brand">⚡ Kinerja</div>
+              <div class="wallet-amount" id="guru-kinerja-hours">0 / 0 JP</div>
+              <div class="wallet-sub" id="guru-kinerja-sub">Jam ajar selesai hari ini</div>
+            </div>
+            <div class="wallet-actions">
+              <button class="w-act" onclick="navigate('presensi')">
+                <div class="w-act-icon">✋</div>
+                <span>Presensi</span>
+              </button>
+              <button class="w-act" onclick="navigate('library')">
+                <div class="w-act-icon">📚</div>
+                <span>E-Book</span>
+              </button>
+              <button class="w-act" onclick="navigate('jadwal')">
+                <div class="w-act-icon">📅</div>
+                <span>Jadwal</span>
               </button>
             </div>
           </div>
@@ -933,8 +957,8 @@
               <span class="menu-label">Presensi</span>
             </button>
             <button class="menu-item" onclick="navigate('tugas')">
-              <div class="menu-icon g-amber">📚</div>
-              <span class="menu-label">Tugas & PR</span>
+              <div class="menu-icon g-amber" id="menu-5-icon">📚</div>
+              <span class="menu-label" id="menu-5-label">Tugas & PR</span>
             </button>
             <button class="menu-item" onclick="navigate('library')">
               <div class="menu-icon g-purple">📖</div>
@@ -1053,56 +1077,64 @@
         </div>
       </div>
 
-      <!-- 8. HALAMAN PRESENSI (HARIAN 1X SEHARI ATAU PER MAPEL + WAJIB SURAT IZIN/SAKIT) -->
+      <!-- 8. HALAMAN PRESENSI (SISWA: HARIAN/MAPEL | GURU: KETERSEDIAAN JAM PELAJARAN HARI INI) -->
       <div id="page-presensi" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
-            <h3>✋ Presensi Kehadiran</h3>
+            <h3 id="presensi-banner-title">✋ Presensi Kehadiran</h3>
             <p id="att-mode-desc">Aturan: 1x Absen Harian (atau pilih Mode Per Mapel)</p>
           </div>
 
-          <div class="glass-card">
-            <div class="form-group" style="margin-bottom:10px;">
-              <label class="form-label">Mode Absensi</label>
-              <select id="att-mode-select" class="form-select" onchange="onAttendanceModeChange()">
-                <option value="HARIAN">Harian Sekolah (Maksimal 1x per Hari)</option>
-                <option value="MAPEL">Per Mata Pelajaran (1x per Mapel per Hari)</option>
-              </select>
-            </div>
+          <!-- SESI SISWA -->
+          <div id="presensi-siswa-wrap">
+            <div class="glass-card">
+              <div class="form-group" style="margin-bottom:10px;">
+                <label class="form-label">Mode Absensi</label>
+                <select id="att-mode-select" class="form-select" onchange="onAttendanceModeChange()">
+                  <option value="HARIAN">Harian Sekolah (Maksimal 1x per Hari)</option>
+                  <option value="MAPEL">Per Mata Pelajaran (1x per Mapel per Hari)</option>
+                </select>
+              </div>
 
-            <div id="att-mapel-group" class="form-group hidden">
-              <label class="form-label">Pilih Mata Pelajaran</label>
-              <select id="att-mapel-select" class="form-select"></select>
-            </div>
+              <div id="att-mapel-group" class="form-group hidden">
+                <label class="form-label">Pilih Mata Pelajaran</label>
+                <select id="att-mapel-select" class="form-select"></select>
+              </div>
 
-            <label class="form-label">Pilih Status Kehadiran Hari Ini</label>
-            <div class="att-choice-grid">
-              <button type="button" class="att-choice-btn hadir" onclick="selectAttendanceStatus('Hadir')">
-                <span>✅</span>
-                <span>Hadir</span>
-              </button>
-              <button type="button" class="att-choice-btn izin" onclick="openLeaveModal('Izin')">
-                <span>📝</span>
-                <span>Izin</span>
-              </button>
-              <button type="button" class="att-choice-btn sakit" onclick="openLeaveModal('Sakit')">
-                <span>🩺</span>
-                <span>Sakit</span>
-              </button>
+              <label class="form-label">Pilih Status Kehadiran Hari Ini</label>
+              <div class="att-choice-grid">
+                <button type="button" class="att-choice-btn hadir" onclick="selectAttendanceStatus('Hadir')">
+                  <span>✅</span>
+                  <span>Hadir</span>
+                </button>
+                <button type="button" class="att-choice-btn izin" onclick="openLeaveModal('Izin')">
+                  <span>📝</span>
+                  <span>Izin</span>
+                </button>
+                <button type="button" class="att-choice-btn sakit" onclick="openLeaveModal('Sakit')">
+                  <span>🩺</span>
+                  <span>Sakit</span>
+                </button>
+              </div>
+              <div id="att-status-info" style="font-size:12px; color:var(--text-muted);"></div>
             </div>
-            <div id="att-status-info" style="font-size:12px; color:var(--text-muted);"></div>
+          </div>
+
+          <!-- SESI GURU: KETERSEDIAAN JAM PELAJARAN HARI INI -->
+          <div id="presensi-guru-wrap" class="hidden">
+            <div id="guru-today-slots-container"></div>
           </div>
 
           <div id="attendance-list"></div>
         </div>
       </div>
 
-      <!-- 9. HALAMAN TUGAS & LMS -->
+      <!-- 9. HALAMAN TUGAS & LMS (SISWA) / INPUT NILAI UJIAN SISWA (GURU) -->
       <div id="page-tugas" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
-            <h3>📚 Tugas & Materi Kelas</h3>
-            <p>Learning Management System SMP Islamiyah</p>
+            <h3 id="tugas-page-title">📚 Tugas & Materi Kelas</h3>
+            <p id="tugas-page-sub">Learning Management System SMP Islamiyah</p>
           </div>
           <div id="tugas-list"></div>
         </div>
@@ -1119,13 +1151,14 @@
         </div>
       </div>
 
-      <!-- 11. HALAMAN E-LIBRARY -->
+      <!-- 11. HALAMAN E-LIBRARY (DENGAN UPLOAD E-BOOK PDF WAJIB 1X SEMINGGU UNTUK GURU) -->
       <div id="page-library" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
             <h3>📖 E-Library Islamiyah</h3>
             <p>Perpustakaan Digital & Modul PDF Pembelajaran</p>
           </div>
+          <div id="guru-ebook-upload-box" class="hidden"></div>
           <div id="library-list"></div>
         </div>
       </div>
@@ -1313,7 +1346,7 @@
           <div style="font-size:10.5px; opacity:0.9;" id="m-chat-peer-sub">Balasan privat • Otomatis hangus setelah selesai</div>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
-          <button type="button" class="m-chat-close-session" onclick="expireAndCloseChatSession()" title="Akhiri & Hanguskan Chat">Hanguskan</button>
+          <button type="button" id="btn-hanguskan-chat" class="m-chat-close-session hidden" onclick="expireAndCloseChatSession()" title="Akhiri & Hanguskan Chat (Khusus Guru)">Hanguskan</button>
           <button type="button" class="modal-close-btn" style="padding:5px 9px;" onclick="toggleCompactChat(false)">—</button>
         </div>
       </div>
@@ -1742,13 +1775,29 @@
       document.getElementById('auth-identifier').placeholder = role === 'siswa' ? 'Contoh NIS Kelas IX: 2573' : 'guru@islamiyah.sch.id';
       document.getElementById('secret-label').textContent = role === 'siswa' ? 'PIN Siswa (6 Digit)' : 'Password Guru';
       document.getElementById('auth-secret').placeholder = role === 'siswa' ? 'Masukkan PIN (6 digit)' : 'Masukkan Password';
+
+      // Registrasi mandiri HANYA berlaku untuk Siswa; registrasi Guru dimatikan & dihapus dari form login
+      if (role === 'guru' && isRegisterMode) {
+        isRegisterMode = false;
+        document.getElementById('reg-name-group').classList.add('hidden');
+        document.getElementById('reg-kelas-group').classList.add('hidden');
+        document.getElementById('auth-submit-btn').textContent = 'Masuk Portal ISLAMIYAH';
+      }
+      const switchWrap = document.getElementById('auth-switch-wrap');
+      if (switchWrap) {
+        switchWrap.classList.toggle('hidden', role === 'guru');
+      }
       document.getElementById('reg-kelas-group').classList.toggle('hidden', !isRegisterMode || role === 'guru');
     }
 
     function toggleAuthMode() {
+      if (authRole === 'guru') {
+        isRegisterMode = false;
+        return showToast('Registrasi mandiri tidak tersedia untuk Guru. Akun Guru didaftarkan melalui Panel Guru.');
+      }
       isRegisterMode = !isRegisterMode;
       document.getElementById('reg-name-group').classList.toggle('hidden', !isRegisterMode);
-      document.getElementById('reg-kelas-group').classList.toggle('hidden', !isRegisterMode || authRole === 'guru');
+      document.getElementById('reg-kelas-group').classList.toggle('hidden', !isRegisterMode);
       document.getElementById('auth-submit-btn').textContent = isRegisterMode ? 'Daftar Akun (Cek NIS)' : 'Masuk Portal ISLAMIYAH';
       document.getElementById('auth-toggle-text').innerHTML = isRegisterMode
         ? 'Sudah punya akun? <span onclick="toggleAuthMode()">Masuk di sini</span>'
@@ -1842,49 +1891,42 @@
         }
       }
 
-      // Alur Guru
+      // Alur Guru (Hanya Login; Pendaftaran Guru hanya lewat Panel Guru oleh Admin Utama)
       if (authRole === 'guru') {
+        if (isRegisterMode) {
+          isRegisterMode = false;
+          return showToast('Registrasi akun Guru ditutup di halaman login.');
+        }
         const accountsMap = getAccountsMap();
         const key = `guru:${identifier.toLowerCase()}`;
-        if (isRegisterMode) {
-          if (!inputName) return showToast('Nama lengkap guru wajib diisi.');
-          const guruObj = {
+        let foundGuru = accountsMap[key] || null;
+
+        if (!foundGuru && sb) {
+          const { data } = await sb.from('profiles').select('*').eq('role', 'guru').eq('email', identifier.toLowerCase()).eq('password_or_pin', secret).maybeSingle();
+          foundGuru = data;
+        }
+        // Akun Master Guru / Admin Utama bawaan
+        if (!foundGuru && identifier.toLowerCase() === 'guru@islamiyah.sch.id' && secret === 'admin123') {
+          foundGuru = {
             role: 'guru',
             nis: null,
-            email: identifier,
-            password_or_pin: secret,
-            full_name: inputName,
-            kelas: 'Guru SMP Islamiyah'
+            email: 'guru@islamiyah.sch.id',
+            password_or_pin: 'admin123',
+            full_name: 'Admin Utama Guru',
+            kode_guru: 21,
+            is_master_admin: true,
+            kelas: 'Guru Akademik'
           };
-          saveAccountLocal(guruObj);
-          if (sb) {
-            await sb.from('profiles').upsert([guruObj], { onConflict: 'email' });
-          }
-          currentUser = guruObj;
-          localStorage.setItem('islamiyah_user', JSON.stringify(guruObj));
-          showLoading('Registrasi Guru Berhasil...', `Menyiapkan dashboard ${inputName}`);
-          await delay(650);
-          hideLoading();
-          await enterApp();
-        } else {
-          let foundGuru = accountsMap[key] || null;
-          if (!foundGuru && sb) {
-            const { data } = await sb.from('profiles').select('*').eq('role', 'guru').eq('email', identifier).eq('password_or_pin', secret).maybeSingle();
-            foundGuru = data;
-          }
-          if (!foundGuru && identifier.toLowerCase() === 'guru@islamiyah.sch.id' && secret === 'admin123') {
-            foundGuru = { role: 'guru', nis: null, email: identifier, password_or_pin: secret, full_name: 'Ustadz/ah SMP Islamiyah', kelas: 'Guru Akademik' };
-          }
-          if (!foundGuru || foundGuru.password_or_pin !== secret) {
-            return showToast('Email atau password guru tidak valid / belum terdaftar.');
-          }
-          currentUser = foundGuru;
-          localStorage.setItem('islamiyah_user', JSON.stringify(foundGuru));
-          showLoading('Masuk Panel Guru...', `Selamat datang, ${foundGuru.full_name}`);
-          await delay(650);
-          hideLoading();
-          await enterApp();
         }
+        if (!foundGuru || foundGuru.password_or_pin !== secret) {
+          return showToast('Email belum didaftarkan oleh Admin Guru atau password salah.');
+        }
+        currentUser = foundGuru;
+        localStorage.setItem('islamiyah_user', JSON.stringify(foundGuru));
+        showLoading('Masuk Portal Guru...', `Selamat datang, ${foundGuru.full_name}`);
+        await delay(650);
+        hideLoading();
+        await enterApp();
       }
     }
 
@@ -3070,6 +3112,11 @@
       const bubbleLabel = document.getElementById('m-bubble-label');
       const bubbleSub = document.getElementById('m-bubble-sub');
 
+      const hanguskanBtn = document.getElementById('btn-hanguskan-chat');
+      if (hanguskanBtn) {
+        hanguskanBtn.classList.toggle('hidden', currentUser.role !== 'guru');
+      }
+
       if (currentUser.role === 'guru') {
         // PADA AKUN GURU: Tampilkan NAMA SISWA
         peerTitle.textContent = `Siswa: ${session.studentName} (Kls ${session.studentKelas})`;
@@ -3163,6 +3210,9 @@
     }
 
     function expireAndCloseChatSession() {
+      if (!currentUser || currentUser.role !== 'guru') {
+        return showToast('Hanya Guru yang dapat menghanguskan sesi obrolan.');
+      }
       if (!activeChatSessionId) return;
       // Hapus permanen (hangus) dari penyimpanan agar tidak bisa dilihat lagi
       const remaining = getAllChatSessions().filter(s => s.id !== activeChatSessionId);
@@ -3170,7 +3220,7 @@
       activeChatSessionId = null;
       isCompactChatOpen = false;
       syncChatDockUI();
-      showToast('Sesi obrolan telah diakhiri dan hangus.');
+      showToast('Sesi obrolan telah diakhiri dan hangus oleh Guru.');
     }
 
     window.addEventListener('storage', function(e) {
@@ -3178,6 +3228,795 @@
         syncChatDockUI();
       }
     });
+
+
+    // =========================================================================
+    // V2.5 UPGRADES: KINERJA GURU, PRESENSI JAM AJAR HARI INI, UPLOAD E-BOOK
+    // MINGGUAN, INPUT NILAI LENGKAP (UH/UTS/UAS), PANEL GURU (LAPORAN + REVISI
+    // ABSENSI + FILTER REGISTRASI GURU OLEH ADMIN UTAMA)
+    // =========================================================================
+    const GURU_TEACHING_ATT_KEY = 'islamiyah_guru_teaching_att_v1';
+    const WEEKLY_EBOOK_LOG_KEY = 'islamiyah_weekly_ebook_log_v1';
+    const GURU_STUDENT_REPORTS_KEY = 'islamiyah_guru_student_reports_v1';
+    const STUDENT_ATT_REVISIONS_KEY = 'islamiyah_student_att_revisions_v1';
+
+    function getISOWeekId(dateObj = new Date()) {
+      const d = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+    }
+
+    function getGuruIdentityKey() {
+      if (!currentUser) return 'guru_default';
+      return (currentUser.email || currentUser.full_name || 'guru').toLowerCase();
+    }
+
+    function getWeeklyEbookLogs() {
+      try {
+        return JSON.parse(localStorage.getItem(WEEKLY_EBOOK_LOG_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function hasUploadedEbookThisWeek() {
+      const logs = getWeeklyEbookLogs();
+      const weekId = getISOWeekId();
+      const key = `${getGuruIdentityKey()}_${weekId}`;
+      return Boolean(logs[key]);
+    }
+
+    function markWeeklyEbookUploaded(title, fileName) {
+      const logs = getWeeklyEbookLogs();
+      const weekId = getISOWeekId();
+      const key = `${getGuruIdentityKey()}_${weekId}`;
+      logs[key] = {
+        weekId,
+        title,
+        fileName,
+        uploadedAt: new Date().toLocaleString('id-ID')
+      };
+      try {
+        localStorage.setItem(WEEKLY_EBOOK_LOG_KEY, JSON.stringify(logs));
+      } catch (e) {}
+    }
+
+    function getGuruTodaySlots() {
+      const todayDay = getRealtimeDayName();
+      const schedules = (window.APP_DATA && window.APP_DATA.schedules) || FULL_SCHEDULES;
+      const allToday = schedules.filter(s => s.hari === todayDay);
+      if (currentUser && currentUser.kode_guru) {
+        const mine = allToday.filter(s => Number(s.kode_guru) === Number(currentUser.kode_guru));
+        if (mine.length) return mine;
+      }
+      // Jika login dengan akun guru tanpa kode_guru spesifik, tampilkan jadwal aktif hari ini
+      return allToday;
+    }
+
+    function getGuruTeachingAttendanceMap() {
+      try {
+        return JSON.parse(localStorage.getItem(GURU_TEACHING_ATT_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveGuruTeachingAttendanceMap(map) {
+      try {
+        localStorage.setItem(GURU_TEACHING_ATT_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function getGuruSlotRecordKey(slot) {
+      return `${getTodayISO()}_${getGuruIdentityKey()}_${slot.kelas}_${slot.jam_ke}_${slot.kode_mapel}`;
+    }
+
+    function parseJPCount(jamKeStr) {
+      const str = String(jamKeStr || '1').trim();
+      if (str.includes('-')) {
+        const [a, b] = str.split('-').map(Number);
+        if (!isNaN(a) && !isNaN(b) && b >= a) return (b - a) + 1;
+      }
+      return 1;
+    }
+
+    function computeGuruKinerjaStats() {
+      const slots = getGuruTodaySlots();
+      const attMap = getGuruTeachingAttendanceMap();
+      let totalJP = 0;
+      let hadirJP = 0;
+      let recordedCount = 0;
+
+      slots.forEach(slot => {
+        const jp = parseJPCount(slot.jam_ke);
+        totalJP += jp;
+        const rec = attMap[getGuruSlotRecordKey(slot)];
+        if (rec) {
+          recordedCount++;
+          if (rec.status === 'Hadir') {
+            hadirJP += jp;
+          }
+        }
+      });
+
+      const ebookDone = hasUploadedEbookThisWeek();
+      return {
+        totalJP,
+        hadirJP,
+        recognizedJP: ebookDone ? hadirJP : 0,
+        ebookDone,
+        slotsCount: slots.length,
+        recordedCount
+      };
+    }
+
+    function renderGuruKinerjaCard() {
+      const stats = computeGuruKinerjaStats();
+      const hoursEl = document.getElementById('guru-kinerja-hours');
+      const subEl = document.getElementById('guru-kinerja-sub');
+      if (!hoursEl || !subEl) return;
+
+      if (!stats.ebookDone) {
+        hoursEl.textContent = `${stats.hadirJP} JP (${stats.recognizedJP} Diakui)`;
+        hoursEl.classList.remove('is-lunas');
+        subEl.textContent = `⚠️ Wajib upload 1 E-Book PDF minggu ini agar diakui`;
+      } else {
+        hoursEl.textContent = `${stats.recognizedJP} / ${stats.totalJP} JP`;
+        hoursEl.classList.add('is-lunas');
+        subEl.textContent = `✓ Syarat E-Book terpenuhi • ${getRealtimeDayName()}`;
+      }
+    }
+
+    // Presensi Guru: Ketersediaan Jam Pelajaran HARI INI (Hadir / Izin / Sakit + Wajib lampiran jika Izin/Sakit)
+    let pendingGuruSlotIndex = null;
+    let pendingGuruLeaveType = 'Izin';
+
+    function renderGuruPresensiSection() {
+      const container = document.getElementById('guru-today-slots-container');
+      if (!container) return;
+
+      const todayDay = getRealtimeDayName();
+      const todayISO = getTodayISO();
+      const slots = getGuruTodaySlots();
+      const attMap = getGuruTeachingAttendanceMap();
+
+      if (!slots.length) {
+        container.innerHTML = `<div class="glass-card">Tidak ada jadwal mengajar untuk hari ${todayDay} (${todayISO}).</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="glass-card" style="background: linear-gradient(135deg, #eff6ff, #f0fdf4);">
+          <div style="font-size:12px; font-weight:800; color:#1e3a8a;">📅 Jadwal Mengajar Hari Ini: ${todayDay}, ${todayISO}</div>
+          <div style="font-size:11.5px; color:#475569; margin-top:3px;">
+            Konfirmasi ketersediaan Anda pada setiap jam pelajaran hari ini. Jika memilih <strong>Izin</strong> atau <strong>Sakit</strong>, wajib melampirkan surat/bukti.
+          </div>
+        </div>
+        ${slots.map((slot, idx) => {
+          const rec = attMap[getGuruSlotRecordKey(slot)];
+          const jp = parseJPCount(slot.jam_ke);
+          return `
+            <div class="glass-card">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span class="tag">Jam Ke-${slot.jam_ke} (${jp} JP) • ${slot.jam}</span>
+                <span class="code-badge">Kelas ${slot.kelas}</span>
+              </div>
+              <h4 style="margin:8px 0 3px;">${slot.mapel} [${slot.kode_mapel}]</h4>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">Pengampu: #${slot.kode_guru} ${slot.guru}</div>
+
+              ${rec ? `
+                <div style="padding:9px 11px; border-radius:12px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span class="tag ${rec.status === 'Hadir' ? 'lunas' : rec.status === 'Izin' ? 'pending' : 'belum'}">${rec.status}</span>
+                    <div style="font-size:11px; color:#475569; margin-top:4px;">${rec.note}</div>
+                  </div>
+                  <span style="font-size:11px; font-weight:800; color:#047857;">✓ Tercatat</span>
+                </div>
+              ` : `
+                <div class="att-choice-grid" style="margin-bottom:0;">
+                  <button type="button" class="att-choice-btn hadir" onclick="markGuruSlotHadir(${idx})">
+                    <span>✅</span>
+                    <span>Hadir</span>
+                  </button>
+                  <button type="button" class="att-choice-btn izin" onclick="openGuruSlotLeaveModal(${idx}, 'Izin')">
+                    <span>📝</span>
+                    <span>Izin</span>
+                  </button>
+                  <button type="button" class="att-choice-btn sakit" onclick="openGuruSlotLeaveModal(${idx}, 'Sakit')">
+                    <span>🩺</span>
+                    <span>Sakit</span>
+                  </button>
+                </div>
+              `}
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+
+    function markGuruSlotHadir(slotIdx) {
+      const slots = getGuruTodaySlots();
+      const slot = slots[slotIdx];
+      if (!slot) return;
+      const attMap = getGuruTeachingAttendanceMap();
+      attMap[getGuruSlotRecordKey(slot)] = {
+        status: 'Hadir',
+        note: `Hadir mengajar ${slot.mapel} (Kelas ${slot.kelas}) pukul ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`,
+        lampiran: null,
+        dateISO: getTodayISO()
+      };
+      saveGuruTeachingAttendanceMap(attMap);
+      renderGuruPresensiSection();
+      renderGuruKinerjaCard();
+      showToast(`Jam ajar ${slot.mapel} (Kelas ${slot.kelas}) tercatat HADIR!`);
+    }
+
+    function openGuruSlotLeaveModal(slotIdx, leaveType) {
+      const slots = getGuruTodaySlots();
+      const slot = slots[slotIdx];
+      if (!slot) return;
+      pendingGuruSlotIndex = slotIdx;
+      pendingGuruLeaveType = leaveType;
+      pendingLeaveStatus = leaveType;
+      document.getElementById('leave-modal-title').textContent = `Surat ${leaveType} Mengajar Guru`;
+      document.getElementById('leave-type-display').value = `${leaveType} — ${slot.mapel} (Kelas ${slot.kelas}, Jam ${slot.jam_ke})`;
+      document.getElementById('leave-reason').value = '';
+      document.getElementById('leave-file').value = '';
+      document.getElementById('leave-modal').classList.remove('hidden');
+    }
+
+    // Override submitLeaveAttendance so it handles BOTH Guru teaching slot leave AND Siswa leave
+    const _origSubmitLeaveAttendance = submitLeaveAttendance;
+    submitLeaveAttendance = function(e) {
+      if (currentUser && currentUser.role === 'guru' && pendingGuruSlotIndex !== null) {
+        e.preventDefault();
+        const reason = document.getElementById('leave-reason').value.trim();
+        const fileInput = document.getElementById('leave-file');
+        const file = fileInput.files && fileInput.files[0];
+        if (!reason) return showToast('Alasan / keterangan wajib diisi.');
+        if (!file) return showToast('Wajib melampirkan surat keterangan izin/sakit!');
+
+        const slots = getGuruTodaySlots();
+        const slot = slots[pendingGuruSlotIndex];
+        if (slot) {
+          const attMap = getGuruTeachingAttendanceMap();
+          attMap[getGuruSlotRecordKey(slot)] = {
+            status: pendingGuruLeaveType,
+            note: `${reason} • Lampiran: ${file.name}`,
+            lampiran: file.name,
+            dateISO: getTodayISO()
+          };
+          saveGuruTeachingAttendanceMap(attMap);
+        }
+        pendingGuruSlotIndex = null;
+        closeLeaveModal();
+        renderGuruPresensiSection();
+        renderGuruKinerjaCard();
+        showToast(`Keterangan ${pendingGuruLeaveType} + lampiran "${file.name}" tersimpan!`);
+        return;
+      }
+      return _origSubmitLeaveAttendance(e);
+    };
+
+    // REQUIREMENT 3: Upload E-Book PDF di dalam halaman Library (minimal 1x seminggu agar akumulasi jam ajar guru diakui)
+    function renderGuruLibraryUploadBox() {
+      const box = document.getElementById('guru-ebook-upload-box');
+      if (!box) return;
+      if (!currentUser || currentUser.role !== 'guru') {
+        box.classList.add('hidden');
+        return;
+      }
+      box.classList.remove('hidden');
+      const weekId = getISOWeekId();
+      const logs = getWeeklyEbookLogs();
+      const myLog = logs[`${getGuruIdentityKey()}_${weekId}`];
+
+      box.innerHTML = `
+        <div class="glass-card" style="border: 1.5px solid ${myLog ? '#10b981' : '#f59e0b'}; background: ${myLog ? 'rgba(236,253,245,0.92)' : 'rgba(255,251,235,0.94)'};">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+            <span class="tag ${myLog ? 'lunas' : 'pending'}">${myLog ? '✓ Syarat Mingguan Terpenuhi' : '⚠️ Wajib Upload 1x/Minggu'}</span>
+            <span style="font-size:11px; font-weight:800; color:#475569;">Pekan ${weekId}</span>
+          </div>
+          <h4 style="font-size:14px; margin-bottom:4px;">📤 Upload E-Book Pembelajaran (PDF)</h4>
+          <p style="font-size:11.5px; color:#475569; margin-bottom:10px; line-height:1.45;">
+            ${myLog
+              ? `Anda sudah mengunggah <strong>"${myLog.title}"</strong> (${myLog.uploadedAt}). Akumulasi jam ajar Anda minggu ini <strong>DIAKUI</strong> oleh sistem.`
+              : `Minimal unggah <strong>1 file E-Book PDF per minggu</strong> sebagai syarat akumulasi jam ajar guru diakui oleh sistem Kinerja.`
+            }
+          </p>
+          <form onsubmit="handleGuruUploadEbookPdf(event)">
+            <div class="form-group" style="margin-bottom:8px;">
+              <input type="text" id="ebook-kat" class="form-input" placeholder="Mata Pelajaran / Kategori (Contoh: IPA Kelas IX)" required />
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <input type="text" id="ebook-title" class="form-input" placeholder="Judul E-Book / Modul PDF" required />
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">Pilih File E-Book (Format .PDF)</label>
+              <input type="file" id="ebook-pdf-file" class="form-input" accept="application/pdf,.pdf" required />
+            </div>
+            <button type="submit" class="btn-primary">Upload E-Book PDF & Aktifkan Pengakuan Jam Ajar</button>
+          </form>
+        </div>
+      `;
+    }
+
+    async function handleGuruUploadEbookPdf(e) {
+      e.preventDefault();
+      const kat = document.getElementById('ebook-kat').value.trim();
+      const title = document.getElementById('ebook-title').value.trim();
+      const fileInput = document.getElementById('ebook-pdf-file');
+      const file = fileInput.files && fileInput.files[0];
+
+      if (!file) return showToast('Pilih file PDF terlebih dahulu.');
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        return showToast('Format file wajib berbentuk PDF (.pdf)!');
+      }
+
+      const blobUrl = URL.createObjectURL(file);
+      const bookRow = {
+        kategori: kat,
+        judul: title,
+        deskripsi: `Diunggah oleh ${currentUser.full_name} • File: ${file.name}`,
+        pdf_url: blobUrl
+      };
+
+      DEMO_DB.library_books.unshift(bookRow);
+      if (window.APP_DATA) window.APP_DATA.libraryBooks = DEMO_DB.library_books;
+      markWeeklyEbookUploaded(title, file.name);
+
+      renderGuruLibraryUploadBox();
+      renderLibrary();
+      renderGuruKinerjaCard();
+      showToast('E-Book PDF berhasil diupload! Akumulasi jam ajar minggu ini resmi diakui.');
+      e.target.reset();
+    }
+
+    // REQUIREMENT 4: Fitur 'Tugas & PR' bagi Guru diganti menjadi Input Nilai Siswa (UH, UTS, UAS)
+    function renderGuruGradeInputPage() {
+      const container = document.getElementById('tugas-list');
+      const rosterOpts = CLASS_IX_ROSTER.map(s => `<option value="${s.nis}">${s.nis} — ${s.nama} (Kelas ${s.kelas})</option>`).join('');
+      const mapelOpts = Object.values(MAPEL_CODES).map(m => `<option value="${m}">${m}</option>`).join('');
+
+      container.innerHTML = `
+        <div class="glass-card">
+          <h4 style="margin-bottom:10px;">📝 Form Input Nilai Evaluasi Siswa</h4>
+          <form onsubmit="submitGuruStudentGrade(event)">
+            <div class="form-group">
+              <label class="form-label">Pilih Siswa</label>
+              <select id="in-grade-nis" class="form-select" required>${rosterOpts}</select>
+            </div>
+            <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label class="form-label">Jenis Ujian</label>
+                <select id="in-grade-type" class="form-select">
+                  <option value="Ujian Harian 1">Ujian Harian 1</option>
+                  <option value="Ujian Harian 2">Ujian Harian 2</option>
+                  <option value="Ujian Harian 3">Ujian Harian 3</option>
+                  <option value="UTS">Ujian Tengah Semester (UTS)</option>
+                  <option value="UAS">Ujian Akhir Semester (UAS)</option>
+                  <option value="Praktik / Tugas">Ujian Praktik</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Semester</label>
+                <select id="in-grade-sem" class="form-select">
+                  <option value="Ganjil">Ganjil</option>
+                  <option value="Genap">Genap</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mata Pelajaran</label>
+              <select id="in-grade-mapel" class="form-select">${mapelOpts}</select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nilai (0 – 100)</label>
+              <input type="number" id="in-grade-score" min="0" max="100" class="form-input" placeholder="Contoh: 88" required />
+            </div>
+            <button type="submit" class="btn-primary">Simpan Nilai Siswa</button>
+          </form>
+        </div>
+
+        <div class="glass-card">
+          <h4 style="margin-bottom:8px;">📊 Riwayat Input Nilai Terbaru</h4>
+          <div id="guru-recent-grades-list">
+            ${DEMO_DB.exams.slice(-6).reverse().map(x => `
+              <div style="padding:8px 10px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:12.5px; font-weight:800;">NIS ${x.nis} • ${x.mapel}</div>
+                  <div style="font-size:11px; color:#64748b;">${x.jenis_ujian} • Semester ${x.semester}</div>
+                </div>
+                <span class="tag lunas" style="font-size:13px;">${x.nilai}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    async function submitGuruStudentGrade(e) {
+      e.preventDefault();
+      const row = {
+        nis: document.getElementById('in-grade-nis').value,
+        semester: document.getElementById('in-grade-sem').value,
+        jenis_ujian: document.getElementById('in-grade-type').value,
+        mapel: document.getElementById('in-grade-mapel').value,
+        nilai: parseInt(document.getElementById('in-grade-score').value, 10),
+        kkm: 75
+      };
+      if (sb) {
+        await sb.from('exam_results').insert([row]);
+      }
+      DEMO_DB.exams.push(row);
+      if (window.APP_DATA) window.APP_DATA.exams = DEMO_DB.exams;
+      renderGuruGradeInputPage();
+      showToast(`Nilai ${row.jenis_ujian} (${row.mapel}: ${row.nilai}) berhasil disimpan!`);
+    }
+
+    // REQUIREMENT 5: Isi Panel Guru diganti semua menjadi:
+    // (1) Laporan Guru terkait Siswa + upload berkas opsional
+    // (2) Revisi Absensi Siswa yang ternyata tidak izin/sakit (ubah ke Alpa/Hadir)
+    // (3) Filter / Pendaftaran Akun Guru Baru (hanya bisa didaftarkan oleh Admin Utama / Anda seorang via Panel Guru)
+    function getGuruReports() {
+      try {
+        return JSON.parse(localStorage.getItem(GURU_STUDENT_REPORTS_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveGuruReports(list) {
+      try {
+        localStorage.setItem(GURU_STUDENT_REPORTS_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function getStudentAttendanceRevisions() {
+      try {
+        return JSON.parse(localStorage.getItem(STUDENT_ATT_REVISIONS_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveStudentAttendanceRevisions(map) {
+      try {
+        localStorage.setItem(STUDENT_ATT_REVISIONS_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function isMasterAdminGuru() {
+      if (!currentUser || currentUser.role !== 'guru') return false;
+      return currentUser.is_master_admin === true || (currentUser.email || '').toLowerCase() === 'guru@islamiyah.sch.id';
+    }
+
+    renderGuruPanel = function() {
+      const box = document.getElementById('guru-panel-content');
+      if (!currentUser || currentUser.role !== 'guru') {
+        box.innerHTML = `<div class="glass-card"><h4>🔒 Khusus Akun Guru</h4><p style="font-size:13px; color:var(--text-muted); margin-top:6px;">Halaman ini hanya dapat diakses oleh akun Guru.</p></div>`;
+        return;
+      }
+
+      const rosterOpts = CLASS_IX_ROSTER.map(s => `<option value="${s.nis}">${s.nis} — ${s.nama} (Kelas ${s.kelas})</option>`).join('');
+      const guruCodeOpts = Object.entries(GURU_CODES).map(([num, name]) => `<option value="${num}">#${num} — ${name}</option>`).join('');
+      const reports = getGuruReports();
+      const revisions = getStudentAttendanceRevisions();
+      const accountsMap = getAccountsMap();
+      const registeredGurus = Object.values(accountsMap).filter(a => a && a.role === 'guru');
+
+      box.innerHTML = `
+        <!-- 1. LAPORAN GURU TERKAIT SISWA + UPLOAD BERKAS OPSIONAL -->
+        <div class="glass-card">
+          <h4 style="margin-bottom:10px;">📋 1. Laporan Guru Terkait Siswa</h4>
+          <form onsubmit="submitGuruStudentReport(event)">
+            <div class="form-group">
+              <label class="form-label">Pilih Siswa</label>
+              <select id="rep-siswa-nis" class="form-select" required>${rosterOpts}</select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kategori Laporan</label>
+              <select id="rep-kategori" class="form-select">
+                <option value="Kedisiplinan & Sikap">Kedisiplinan & Sikap</option>
+                <option value="Perkembangan Akademik">Perkembangan Akademik</option>
+                <option value="Konseling / Pembinaan">Konseling / Pembinaan</option>
+                <option value="Prestasi Siswa">Prestasi Siswa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Isi Laporan / Catatan Guru</label>
+              <textarea id="rep-catatan" class="form-textarea" placeholder="Tulis laporan perkembangan atau kejadian siswa..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Upload Berkas Pendukung (Opsional / Tidak Wajib)</label>
+              <input type="file" id="rep-berkas" class="form-input" accept="image/*,.pdf,.doc,.docx" />
+            </div>
+            <button type="submit" class="btn-primary">Simpan Laporan Siswa</button>
+          </form>
+
+          ${reports.length ? `
+            <div style="margin-top:12px; border-top:1px solid #e2e8f0; padding-top:10px;">
+              <div style="font-size:12px; font-weight:800; margin-bottom:6px;">Riwayat Laporan Tersimpan (${reports.length})</div>
+              ${reports.slice(0, 5).map(r => `
+                <div style="padding:8px 10px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; margin-bottom:6px;">
+                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:800;">
+                    <span>${r.studentName} (NIS ${r.nis})</span>
+                    <span class="tag">${r.kategori}</span>
+                  </div>
+                  <div style="font-size:12px; color:#334155; margin-top:4px;">${r.catatan}</div>
+                  <div style="font-size:10.5px; color:#64748b; margin-top:3px;">Oleh: ${r.guruName} • ${r.time} ${r.fileName ? `• 📎 ${r.fileName}` : ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 2. REVISI ABSENSI SISWA YANG TERNYATA TIDAK IZIN / SAKIT -->
+        <div class="glass-card">
+          <h4 style="margin-bottom:6px;">🛠️ 2. Revisi Absensi Siswa</h4>
+          <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">
+            Gunakan fitur ini jika siswa tercatat Izin/Sakit namun ternyata tidak ada surat sah atau perlu dikoreksi status kehadirannya.
+          </p>
+          <form onsubmit="submitStudentAttendanceRevision(event)">
+            <div class="form-group">
+              <label class="form-label">Pilih Siswa yang Direvisi</label>
+              <select id="rev-siswa-nis" class="form-select" required>${rosterOpts}</select>
+            </div>
+            <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label class="form-label">Status Awal</label>
+                <select id="rev-from-status" class="form-select">
+                  <option value="Izin (Tanpa Surat)">Izin (Tanpa Surat)</option>
+                  <option value="Sakit (Tanpa Surat)">Sakit (Tanpa Surat)</option>
+                  <option value="Hadir">Hadir</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Ubah Menjadi</label>
+                <select id="rev-to-status" class="form-select">
+                  <option value="A">Alpa (Tanpa Keterangan)</option>
+                  <option value="H">Hadir</option>
+                  <option value="I">Izin Sah</option>
+                  <option value="S">Sakit Sah</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Alasan Revisi</label>
+              <input type="text" id="rev-reason" class="form-input" placeholder="Contoh: Tidak melampirkan surat keterangan dokter/wali" required />
+            </div>
+            <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, #d97706, #ea580c);">Terapkan Revisi Absensi</button>
+          </form>
+
+          ${Object.keys(revisions).length ? `
+            <div style="margin-top:10px; font-size:11.5px;">
+              <strong>Daftar Revisi Aktif:</strong>
+              ${Object.values(revisions).map(rv => `
+                <div style="padding:7px 9px; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; margin-top:5px;">
+                  <strong>${rv.studentName}</strong> (NIS ${rv.nis}) → Diubah ke <span class="tag belum">${rv.toStatusLabel}</span> (${rv.reason})
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- 3. FILTER PENDAFTARAN GURU (HANYA BISA DIDAFTARKAN OLEH ADMIN UTAMA DI SINI) -->
+        <div class="glass-card" style="border: 1.5px solid #2563eb;">
+          <h4 style="margin-bottom:6px;">🔐 3. Otorisasi & Pendaftaran Akun Guru</h4>
+          ${isMasterAdminGuru() ? `
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">
+              Registrasi guru di halaman depan telah dimatikan. Hanya Anda (Admin Utama) yang dapat mendaftarkan akun guru baru di sini.
+            </p>
+            <form onsubmit="adminRegisterNewGuru(event)">
+              <div class="form-group">
+                <label class="form-label">Nama Lengkap Guru</label>
+                <input type="text" id="reg-guru-name" class="form-input" placeholder="Contoh: Mauludiyatul Ainiyah, S.Pd." required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Kode Guru (Sesuai Jadwal)</label>
+                <select id="reg-guru-code" class="form-select">${guruCodeOpts}</select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Login Guru</label>
+                <input type="email" id="reg-guru-email" class="form-input" placeholder="nama.guru@islamiyah.sch.id" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password Akses Guru</label>
+                <input type="text" id="reg-guru-pass" class="form-input" placeholder="Buat password login guru" required />
+              </div>
+              <button type="submit" class="btn-primary">Daftarkan Akun Guru Resmi</button>
+            </form>
+
+            <div style="margin-top:12px;">
+              <div style="font-size:12px; font-weight:800; margin-bottom:6px;">Akun Guru Terdaftar (${registeredGurus.length + 1})</div>
+              <div style="padding:7px 10px; border-radius:10px; background:#eff6ff; font-size:11.5px; margin-bottom:5px;">
+                <strong>Admin Utama Guru</strong> • guru@islamiyah.sch.id (Master)
+              </div>
+              ${registeredGurus.map(g => `
+                <div style="padding:7px 10px; border-radius:10px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11.5px; margin-bottom:5px;">
+                  <strong>${g.full_name}</strong> (#${g.kode_guru || '-'}) • ${g.email}
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <p style="font-size:12px; color:#b91c1c; font-weight:600;">
+              🔒 Otorisasi Pendaftaran Guru baru dikunci khusus untuk Admin Utama (guru@islamiyah.sch.id).
+            </p>
+          `}
+        </div>
+      `;
+    };
+
+    function submitGuruStudentReport(e) {
+      e.preventDefault();
+      const nis = document.getElementById('rep-siswa-nis').value;
+      const st = getRosterByNis(nis);
+      const kategori = document.getElementById('rep-kategori').value;
+      const catatan = document.getElementById('rep-catatan').value.trim();
+      const fileInput = document.getElementById('rep-berkas');
+      const file = fileInput.files && fileInput.files[0];
+
+      const list = getGuruReports();
+      list.unshift({
+        nis,
+        studentName: st ? st.nama : nis,
+        kategori,
+        catatan,
+        fileName: file ? file.name : '',
+        guruName: currentUser.full_name,
+        time: new Date().toLocaleString('id-ID')
+      });
+      saveGuruReports(list);
+      renderGuruPanel();
+      showToast('Laporan guru terkait siswa berhasil disimpan!');
+    }
+
+    function submitStudentAttendanceRevision(e) {
+      e.preventDefault();
+      const nis = document.getElementById('rev-siswa-nis').value;
+      const st = getRosterByNis(nis);
+      const toCode = document.getElementById('rev-to-status').value;
+      const reason = document.getElementById('rev-reason').value.trim();
+      const labelMap = { A: 'Alpa', H: 'Hadir', I: 'Izin', S: 'Sakit' };
+
+      const revs = getStudentAttendanceRevisions();
+      revs[nis] = {
+        nis,
+        studentName: st ? st.nama : nis,
+        toCode,
+        toStatusLabel: labelMap[toCode] || toCode,
+        reason,
+        revisedBy: currentUser.full_name,
+        time: new Date().toLocaleString('id-ID')
+      };
+      saveStudentAttendanceRevisions(revs);
+      renderGuruPanel();
+      showToast(`Absensi ${st ? st.nama : nis} berhasil direvisi menjadi ${labelMap[toCode]}!`);
+    }
+
+    async function adminRegisterNewGuru(e) {
+      e.preventDefault();
+      if (!isMasterAdminGuru()) {
+        return showToast('Hanya Admin Utama yang berhak mendaftarkan guru baru.');
+      }
+      const fullName = document.getElementById('reg-guru-name').value.trim();
+      const kodeGuru = Number(document.getElementById('reg-guru-code').value);
+      const email = document.getElementById('reg-guru-email').value.trim().toLowerCase();
+      const pass = document.getElementById('reg-guru-pass').value.trim();
+
+      const newGuru = {
+        role: 'guru',
+        nis: null,
+        email,
+        password_or_pin: pass,
+        full_name: fullName,
+        kode_guru: kodeGuru,
+        is_master_admin: false,
+        kelas: 'Guru SMP Islamiyah'
+      };
+
+      saveAccountLocal(newGuru);
+      if (sb) {
+        await sb.from('profiles').upsert([newGuru], { onConflict: 'email' });
+      }
+      renderGuruPanel();
+      showToast(`Akun Guru "${fullName}" berhasil didaftarkan!`);
+    }
+
+    // Apply attendance revisions into Siswa Weekly Rekap table automatically
+    const _origRenderRekap = renderRekap;
+    renderRekap = function() {
+      _origRenderRekap();
+      if (!currentUser || currentUser.role !== 'siswa') return;
+      const revs = getStudentAttendanceRevisions();
+      const myRev = revs[currentUser.nis];
+      if (myRev) {
+        const box = document.getElementById('rekap-container');
+        if (box) {
+          box.insertAdjacentHTML('afterbegin', `
+            <div class="glass-card" style="border:1.5px solid #f59e0b; background:#fffbeb; margin-bottom:10px;">
+              <div style="font-size:12px; font-weight:800; color:#b45309;">⚠️ Pemberitahuan Revisi Absensi oleh Guru</div>
+              <div style="font-size:11.5px; color:#78350f; margin-top:3px;">
+                Status kehadiranmu direvisi menjadi <strong>${myRev.toStatusLabel}</strong> (${myRev.reason}) oleh ${myRev.revisedBy}.
+              </div>
+            </div>
+          `);
+        }
+      }
+    };
+
+    // Hook into enterApp, renderHome, renderTugas, renderPresensi, renderLibrary
+    const _origEnterApp = enterApp;
+    enterApp = async function() {
+      await _origEnterApp();
+      const isGuru = currentUser && currentUser.role === 'guru';
+
+      // Switch Hero Card (Tagihan Sekolah for Siswa vs Kinerja for Guru)
+      document.getElementById('home-card-siswa')?.classList.toggle('hidden', isGuru);
+      document.getElementById('home-card-guru')?.classList.toggle('hidden', !isGuru);
+
+      // Switch Menu #5 (Tugas & PR for Siswa vs Input Nilai for Guru)
+      const m5Icon = document.getElementById('menu-5-icon');
+      const m5Label = document.getElementById('menu-5-label');
+      if (m5Icon) m5Icon.textContent = isGuru ? '📝' : '📚';
+      if (m5Label) m5Label.textContent = isGuru ? 'Input Nilai' : 'Tugas & PR';
+
+      if (isGuru) {
+        renderGuruKinerjaCard();
+        renderGuruLibraryUploadBox();
+      }
+    };
+
+    const _origRenderHome = renderHome;
+    renderHome = function() {
+      _origRenderHome();
+      if (currentUser && currentUser.role === 'guru') {
+        renderGuruKinerjaCard();
+      }
+    };
+
+    const _origRenderTugas = renderTugas;
+    renderTugas = function() {
+      const titleEl = document.getElementById('tugas-page-title');
+      const subEl = document.getElementById('tugas-page-sub');
+      if (currentUser && currentUser.role === 'guru') {
+        if (titleEl) titleEl.textContent = '📝 Input Nilai Ujian Siswa';
+        if (subEl) subEl.textContent = 'Ujian Harian, UTS, UAS & Praktik SMP Islamiyah';
+        renderGuruGradeInputPage();
+      } else {
+        if (titleEl) titleEl.textContent = '📚 Tugas & Materi Kelas';
+        if (subEl) subEl.textContent = 'Learning Management System SMP Islamiyah';
+        _origRenderTugas();
+      }
+    };
+
+    const _origRenderAttendance = renderAttendance;
+    renderAttendance = function() {
+      const isGuru = currentUser && currentUser.role === 'guru';
+      document.getElementById('presensi-siswa-wrap')?.classList.toggle('hidden', isGuru);
+      document.getElementById('presensi-guru-wrap')?.classList.toggle('hidden', !isGuru);
+      const bannerTitle = document.getElementById('presensi-banner-title');
+      const descEl = document.getElementById('att-mode-desc');
+
+      if (isGuru) {
+        if (bannerTitle) bannerTitle.textContent = '✋ Presensi Mengajar Hari Ini';
+        if (descEl) descEl.textContent = 'Konfirmasi ketersediaan pada jam pelajaran Anda hari ini (Hadir / Izin / Sakit)';
+        document.getElementById('attendance-list').innerHTML = '';
+        renderGuruPresensiSection();
+      } else {
+        if (bannerTitle) bannerTitle.textContent = '✋ Presensi Kehadiran';
+        _origRenderAttendance();
+      }
+    };
+
+    const _origRenderLibrary = renderLibrary;
+    renderLibrary = function() {
+      renderGuruLibraryUploadBox();
+      _origRenderLibrary();
+    };
 
     const savedUser = localStorage.getItem('islamiyah_user');
     if (savedUser) {
