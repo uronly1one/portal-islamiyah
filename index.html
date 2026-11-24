@@ -13,6 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
+      /* Gradasi ala macOS Sequoia / iOS Mesh */
       --mac-bg: radial-gradient(circle at 12% 15%, #dbeafe 0%, transparent 45%),
                 radial-gradient(circle at 88% 12%, #e0e7ff 0%, transparent 45%),
                 radial-gradient(circle at 50% 90%, #ccfbf1 0%, transparent 50%),
@@ -32,7 +33,25 @@
       --shadow-float: 0 16px 36px -6px rgba(37, 99, 235, 0.35);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    input, textarea, select, [contenteditable="true"] {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
+    }
     html, body { background: var(--mac-bg); color: var(--text-main); min-height: 100dvh; }
     body { display: flex; justify-content: center; }
 
@@ -163,6 +182,11 @@
       cursor: pointer; box-shadow: var(--shadow-float); transition: transform 0.15s;
     }
     .btn-primary:active { transform: scale(0.98); }
+    .btn-secondary {
+      width: 100%; padding: 11px 14px; border-radius: 14px;
+      border: 1.5px solid #cbd5e1; background: #fff; color: #334155;
+      font-weight: 700; font-size: 13px; cursor: pointer;
+    }
     .auth-switch { text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-muted); }
     .auth-switch span { color: var(--primary); font-weight: 700; cursor: pointer; }
 
@@ -504,6 +528,269 @@
     }
     .pdf-ext-link { font-size: 12px; font-weight: 700; color: var(--primary); text-decoration: none; }
 
+
+    /* ================= AVATAR IMAGE & PROFILE SETTINGS ================= */
+    .avatar-circle {
+      overflow: hidden;
+      position: relative;
+    }
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .profile-avatar-stage {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .profile-avatar-big {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--hero-grad);
+      color: #fff;
+      font-size: 28px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 3px solid #fff;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
+    }
+    .profile-avatar-big img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-outline-sm {
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-outline-sm:active { transform: scale(0.97); }
+    .accordion-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    .accordion-header {
+      width: 100%;
+      padding: 15px 16px;
+      background: transparent;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0f172a;
+      cursor: pointer;
+      text-align: left;
+    }
+    .accordion-body {
+      padding: 0 16px 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* ================= NOTIF BADGE ON BELL ================= */
+    .icon-pill { position: relative; }
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 99px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #2563eb;
+    }
+
+    /* ================= MESSENGER STYLE FIXED BOTTOM CHAT ================= */
+    .chat-dock-wrapper {
+      position: fixed;
+      bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 480px;
+      padding: 0 14px;
+      z-index: 95;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .messenger-bubble-bar {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: #fff;
+      padding: 8px 14px 8px 10px;
+      border-radius: 99px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.32);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: transform 0.15s;
+    }
+    .messenger-bubble-bar:active { transform: scale(0.96); }
+    .m-bubble-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .m-online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 1.5px solid #0f172a;
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+    }
+    .messenger-compact-box {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 360px;
+      height: 315px;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 22px;
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .m-chat-head {
+      background: var(--hero-grad);
+      color: #fff;
+      padding: 10px 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .m-chat-messages {
+      flex: 1;
+      padding: 10px 12px;
+      overflow-y: auto;
+      background: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .chat-msg {
+      max-width: 82%;
+      padding: 8px 11px;
+      border-radius: 15px;
+      font-size: 12.5px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .chat-msg.me {
+      align-self: flex-end;
+      background: #2563eb;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.other {
+      align-self: flex-start;
+      background: #fff;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg-meta {
+      font-size: 10px;
+      opacity: 0.78;
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+    .m-chat-input-row {
+      padding: 8px;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .m-chat-input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 99px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 12.5px;
+      outline: none;
+    }
+    .m-chat-input:focus { border-color: #2563eb; }
+    .m-chat-send {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .m-chat-close-session {
+      border: none;
+      background: rgba(239, 68, 68, 0.88);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     .hidden { display: none !important; }
     .toast {
       position: fixed; top: 72px; left: 50%; transform: translateX(-50%);
@@ -516,6 +803,7 @@
 <body>
   <div id="toast" class="toast hidden"></div>
 
+  <!-- ANIMASI LOADING OVERLAY -->
   <div id="loading-overlay" class="loading-overlay" aria-live="polite">
     <div class="loading-card">
       <div class="spinner-ring"></div>
@@ -525,6 +813,7 @@
   </div>
 
   <div class="app-shell">
+    <!-- ==================== 1. HALAMAN LOGIN & REGISTRASI ==================== -->
     <div id="auth-view" class="auth-screen">
       <div class="brand-box">
         <img src="./icon.svg" alt="Logo ISLAMIYAH" class="brand-logo" />
@@ -572,7 +861,10 @@
       </div>
     </div>
 
+    <!-- ==================== MAIN APP (SETELAH LOGIN) ==================== -->
     <div id="main-app" class="hidden">
+
+      <!-- STICKY TOP HEADER GLOBAL -->
       <header class="sticky-app-header">
         <div class="top-bar-left">
           <button id="global-back-btn" class="back-btn hidden" onclick="navigate('home')" title="Kembali ke Beranda">←</button>
@@ -584,14 +876,19 @@
         </div>
         <div class="top-actions">
           <button id="install-pwa-btn" class="icon-pill hidden" onclick="installPWA()" title="Install Aplikasi">📲</button>
-          <button class="icon-pill" onclick="navigate('agenda')" title="Agenda Sekolah">🔔</button>
-          <button class="icon-pill" onclick="navigate('profile')" title="Pengaturan Akun">⚙️</button>
+          <button class="icon-pill" onclick="openNotifModal()" title="Notifikasi PR, Acara & Pengumuman">
+            🔔
+            <span id="notif-badge-count" class="notif-dot">4</span>
+          </button>
+          <button class="icon-pill" onclick="navigate('profile')" title="Akun & Pengaturan">⚙️</button>
         </div>
       </header>
 
+      <!-- 2. BERANDA (GOPAY STYLE) -->
       <div id="page-home">
         <div class="gopay-hero-bg"></div>
 
+        <!-- KARTU TAGIHAN BULANAN -->
         <div class="gopay-wallet-wrap">
           <div class="gopay-wallet-card">
             <div class="wallet-balance-box" onclick="navigate('tagihan')">
@@ -616,6 +913,7 @@
           </div>
         </div>
 
+        <!-- GRID 8 MENU UTAMA -->
         <div class="section-wrap">
           <div class="menu-grid">
             <button class="menu-item" onclick="navigate('jadwal')">
@@ -646,13 +944,14 @@
               <div class="menu-icon g-rose">🪪</div>
               <span class="menu-label">Kartu Digital</span>
             </button>
-            <button class="menu-item" id="menu-guru-panel" onclick="navigate('guru-panel')">
-              <div class="menu-icon g-slate">🛠️</div>
-              <span class="menu-label" id="menu-8-label">Panel Guru</span>
+            <button class="menu-item" id="menu-guru-panel" onclick="handleMenu8Click()">
+              <div class="menu-icon g-slate" id="menu-8-icon">✍️</div>
+              <span class="menu-label" id="menu-8-label">Latihan Soal</span>
             </button>
           </div>
         </div>
 
+        <!-- WIDGET JADWAL HARI INI (REALTIME SESUAI HARI & KELAS) -->
         <div class="section-wrap">
           <div class="sec-header">
             <span class="sec-title" id="home-schedule-title">Jadwal Kelas Hari Ini</span>
@@ -661,6 +960,7 @@
           <div id="home-schedule-preview"></div>
         </div>
 
+        <!-- WIDGET AGENDA MENDATANG (REALTIME KALENDER AKADEMIK 1 TAHUN) -->
         <div class="section-wrap">
           <div class="sec-header">
             <span class="sec-title">Agenda Sekolah Mendatang</span>
@@ -670,6 +970,7 @@
         </div>
       </div>
 
+      <!-- 3. HALAMAN JADWAL PELAJARAN KELAS (LENGKAP KODE MAPEL & KODE GURU) -->
       <div id="page-jadwal" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -690,6 +991,7 @@
         </div>
       </div>
 
+      <!-- 4. HALAMAN REKAP KEHADIRAN 1 MINGGU (SEBELAH BERANDA DI STICKY FOOTER) -->
       <div id="page-rekap" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -700,6 +1002,7 @@
         </div>
       </div>
 
+      <!-- 5. HALAMAN KALENDER KEGIATAN 1 TAHUN AJARAN -->
       <div id="page-agenda" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -710,6 +1013,7 @@
         </div>
       </div>
 
+      <!-- 6. HALAMAN HASIL UJIAN (UTS & UAS - GANJIL & GENAP) -->
       <div id="page-nilai" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -738,6 +1042,7 @@
         </div>
       </div>
 
+      <!-- 7. HALAMAN LATIHAN SOAL / CBT (TOMBOL TENGAH BESAR) -->
       <div id="page-latsol" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(59, 130, 246, 0.14));">
@@ -748,6 +1053,7 @@
         </div>
       </div>
 
+      <!-- 8. HALAMAN PRESENSI (HARIAN 1X SEHARI ATAU PER MAPEL + WAJIB SURAT IZIN/SAKIT) -->
       <div id="page-presensi" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -791,6 +1097,7 @@
         </div>
       </div>
 
+      <!-- 9. HALAMAN TUGAS & LMS -->
       <div id="page-tugas" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -801,6 +1108,7 @@
         </div>
       </div>
 
+      <!-- 10. HALAMAN TAGIHAN NON-SPP -->
       <div id="page-tagihan" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -811,6 +1119,7 @@
         </div>
       </div>
 
+      <!-- 11. HALAMAN E-LIBRARY -->
       <div id="page-library" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -821,6 +1130,7 @@
         </div>
       </div>
 
+      <!-- 12. HALAMAN PANEL GURU -->
       <div id="page-guru-panel" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -831,6 +1141,7 @@
         </div>
       </div>
 
+      <!-- 13. HALAMAN KARTU PELAJAR & PROFIL -->
       <div id="page-card" class="hidden">
         <div class="section-wrap">
           <div class="sub-banner">
@@ -856,25 +1167,80 @@
         <div class="section-wrap">
           <div class="sub-banner">
             <h3>⚙️ Akun & Pengaturan</h3>
-            <p>Informasi Profil & Instalasi Aplikasi PWA</p>
+            <p>Kelola Foto Profil, Nomor WhatsApp & Preferensi Aplikasi</p>
           </div>
-          <div class="glass-card">
-            <h4 id="prof-name">Nama Pengguna</h4>
-            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;" id="prof-detail">Detail Akun</p>
+
+          <!-- BAGIAN 1: AKUN & PROFIL (BISA DIBUKA/TUTUP & DIEDIT) -->
+          <div class="accordion-card">
+            <button type="button" class="accordion-header" onclick="toggleProfileSection('sec-akun-body', 'chev-akun')">
+              <span>👤 Bagian 1: Akun & Profil Saya</span>
+              <span id="chev-akun">▾</span>
+            </button>
+            <div id="sec-akun-body" class="accordion-body">
+              <div class="profile-avatar-stage" style="margin-top:12px;">
+                <div class="profile-avatar-big" id="prof-avatar-preview">S</div>
+                <div style="min-width:0; flex:1;">
+                  <h4 id="prof-name" style="font-size:15.5px;">Nama Pengguna</h4>
+                  <p style="font-size:12px; color:var(--text-muted); margin-top:3px;" id="prof-detail">Detail Akun</p>
+                  <span class="tag" style="margin-top:6px;" id="prof-wa-status">WA: Belum diatur</span>
+                </div>
+              </div>
+
+              <!-- Input Kamera & Galeri -->
+              <input type="file" id="input-foto-kamera" accept="image/*" capture="user" class="hidden" onchange="handleProfilePhotoSelect(event)" />
+              <input type="file" id="input-foto-galeri" accept="image/*" class="hidden" onchange="handleProfilePhotoSelect(event)" />
+
+              <div class="form-group">
+                <label class="form-label">Pasang / Ganti Foto Profil</label>
+                <div class="photo-btn-row">
+                  <button type="button" class="btn-outline-sm" onclick="document.getElementById('input-foto-kamera').click()">📷 Ambil Kamera</button>
+                  <button type="button" class="btn-outline-sm" onclick="document.getElementById('input-foto-galeri').click()">🖼️ Pilih Galeri</button>
+                </div>
+              </div>
+
+              <form onsubmit="saveProfileSettings(event)" style="margin-top:12px;">
+                <div class="form-group">
+                  <label class="form-label">Nomor WhatsApp Aktif</label>
+                  <input type="tel" id="prof-wa-input" class="form-input" placeholder="Contoh: 081234567890" />
+                  <div style="font-size:11px; color:#047857; margin-top:4px; font-weight:600;">
+                    🔒 Privasi: Nomor WhatsApp tidak ditampilkan di beranda dan hanya dapat dilihat oleh akun Guru.
+                  </div>
+                </div>
+                <button type="submit" class="btn-primary">Simpan Profil & Nomor WA</button>
+              </form>
+            </div>
           </div>
-          <div class="glass-card" id="pwa-guide-box">
-            <h4>📲 Install ke Home Screen (Android / Windows)</h4>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
-              • <strong>Android (Chrome):</strong> Ketuk titik tiga (⋮) di pojok kanan atas browser → pilih <em>"Tambahkan ke Layar Utama / Install App"</em>.<br/>
-              • <strong>Windows (Edge/Chrome):</strong> Klik ikon komputer/tambah (+) di sisi kanan kolom alamat URL → klik <em>Install</em>.
-            </p>
+
+          <!-- BAGIAN 2: PENGATURAN & DIREKTORI WA (KHUSUS GURU) / PANDUAN APLIKASI -->
+          <div class="accordion-card">
+            <button type="button" class="accordion-header" onclick="toggleProfileSection('sec-pengaturan-body', 'chev-pengaturan')">
+              <span>🛠️ Bagian 2: Pengaturan & Direktori</span>
+              <span id="chev-pengaturan">▾</span>
+            </button>
+            <div id="sec-pengaturan-body" class="accordion-body">
+              <div id="guru-wa-directory-box" class="hidden" style="margin-top:12px;">
+                <h4 style="font-size:13.5px; margin-bottom:6px;">📱 Daftar Nomor WhatsApp Siswa (Khusus Guru)</h4>
+                <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">Nomor WhatsApp siswa yang telah disimpan pada profil mereka:</p>
+                <div id="guru-wa-directory-list"></div>
+              </div>
+
+              <div id="pwa-guide-box" style="margin-top:12px;">
+                <h4 style="font-size:13.5px;">📲 Install ke Home Screen (Android / Windows)</h4>
+                <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+                  • <strong>Android (Chrome):</strong> Ketuk titik tiga (⋮) di pojok kanan atas browser → pilih <em>"Tambahkan ke Layar Utama / Install App"</em>.<br/>
+                  • <strong>Windows (Edge/Chrome):</strong> Klik ikon komputer/tambah (+) di sisi kanan kolom alamat URL → klik <em>Install</em>.
+                </p>
+              </div>
+            </div>
           </div>
-          <button class="btn-primary" style="background: var(--danger);" onclick="logout()">Keluar dari Akun</button>
+
+          <button class="btn-primary" style="background: var(--danger); margin-top:4px;" onclick="logout()">Keluar dari Akun</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL FORMULIR WAJIB SURAT IZIN / SAKIT -->
   <div id="leave-modal" class="modal-backdrop hidden" onclick="handleBackdropLeaveClose(event)">
     <div class="modal-box">
       <div class="modal-head">
@@ -903,6 +1269,7 @@
     </div>
   </div>
 
+  <!-- MODAL PEMBACA PDF MODUL -->
   <div id="pdf-reader-modal" class="modal-backdrop hidden" onclick="handleBackdropPdfClose(event)">
     <div class="modal-box tall">
       <div class="modal-head">
@@ -922,6 +1289,53 @@
     </div>
   </div>
 
+  <!-- FIXED BOTTOM NAVIGATION BAR (BERANDA | REKAP | [LATSOL] | NILAI | AKUN) -->
+  <!-- MODAL NOTIFIKASI LONCENG (PR BARU, ACARA ESOK HARI, ACARA MINGGU DEPAN, PENGUMUMAN) -->
+  <div id="notif-modal" class="modal-backdrop hidden" onclick="if(event.target.id==='notif-modal') closeNotifModal()">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title">🔔 Pusat Notifikasi Sekolah</div>
+          <div class="modal-sub">PR Baru • Acara Esok Hari • Minggu Depan • Pengumuman</div>
+        </div>
+        <button class="modal-close-btn" onclick="closeNotifModal()">✕ Tutup</button>
+      </div>
+      <div class="modal-body" id="notif-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- MESSENGER-STYLE FIXED BOTTOM CHAT BUBBLE & COMPACT CHAT WINDOW -->
+  <div id="chat-dock-wrapper" class="chat-dock-wrapper hidden">
+    <div id="messenger-compact-box" class="messenger-compact-box hidden">
+      <div class="m-chat-head">
+        <div style="min-width:0;">
+          <div style="font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="m-chat-peer-title">Tanya Guru (Live Chat)</div>
+          <div style="font-size:10.5px; opacity:0.9;" id="m-chat-peer-sub">Balasan privat • Otomatis hangus setelah selesai</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button type="button" class="m-chat-close-session" onclick="expireAndCloseChatSession()" title="Akhiri & Hanguskan Chat">Hanguskan</button>
+          <button type="button" class="modal-close-btn" style="padding:5px 9px;" onclick="toggleCompactChat(false)">—</button>
+        </div>
+      </div>
+      <div id="m-chat-messages" class="m-chat-messages"></div>
+      <form class="m-chat-input-row" onsubmit="sendLiveChatMessage(event)">
+        <input type="text" id="m-chat-input" class="m-chat-input" placeholder="Tulis pesan..." autocomplete="off" />
+        <button type="submit" class="m-chat-send" title="Kirim">➤</button>
+      </form>
+    </div>
+
+    <div id="messenger-bubble-bar" class="messenger-bubble-bar" onclick="toggleCompactChat()">
+      <div class="m-bubble-avatar">
+        💬
+        <span class="m-online-dot"></span>
+      </div>
+      <div style="text-align:left;">
+        <div style="font-size:12px; font-weight:800; line-height:1.1;" id="m-bubble-label">Chat Guru Aktif</div>
+        <div style="font-size:10px; opacity:0.85;" id="m-bubble-sub">Ketuk untuk buka ruang obrolan</div>
+      </div>
+    </div>
+  </div>
+
   <nav id="bottom-nav" class="bottom-nav hidden">
     <button class="nav-btn active" id="nav-home" onclick="navigate('home')">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9l-8-6z"/></svg>
@@ -932,11 +1346,12 @@
       <span>Rekap</span>
     </button>
 
+    <!-- TOMBOL TENGAH MENONJOL (LATSOL / CBT) -->
     <div class="nav-center-wrap">
-      <button class="nav-center-btn" onclick="navigate('latsol')" title="Latihan Soal">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <button class="nav-center-btn" onclick="handleCenterChatButton()" title="Chat Langsung ke Guru">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       </button>
-      <span class="nav-center-label">Latsol</span>
+      <span class="nav-center-label">Chat Guru</span>
     </div>
 
     <button class="nav-btn" id="nav-nilai" onclick="navigate('nilai')">
@@ -950,12 +1365,18 @@
   </nav>
 
   <script>
+    // ==========================================================
+    // 1. KONFIGURASI SUPABASE
+    // ==========================================================
     const SUPABASE_URL = 'https://kpftnxrrughnnlizzdjl.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZnRueHJydWdobm5saXp6ZGpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTk1NDIsImV4cCI6MjExMDk3NTU0Mn0.RwW1VCRzDJeR72EMg1KnFbgqF_8Xh80fdQ2lKnu5g6s';
 
     const isSupabaseConfigured = !SUPABASE_URL.includes('YOUR_PROJECT_ID');
     const sb = isSupabaseConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
+    // ==========================================================
+    // 2. DATA RESMI NIS KELAS IX, KODE GURU, KODE MAPEL & JADWAL
+    // ==========================================================
     const CLASS_IX_ROSTER = [
       { nis: '2573', nisn: '0113933676', nama: 'STYA NADITA', lp: 'P', kelas: 'IX' },
       { nis: '2574', nisn: '0114148338', nama: 'AD IKMAL HAKIM', lp: 'L', kelas: 'IX' },
@@ -1038,82 +1459,101 @@
     };
 
     const FULL_SCHEDULES = [
+      // SENIN
       { kelas: 'IX', hari: 'Senin', jam_ke: '1-2', jam: '07.40 - 08.20', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 1, guru: GURU_CODES[1], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Senin', jam_ke: '3', jam: '08.20 - 09.00', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 1, guru: GURU_CODES[1], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Senin', jam_ke: '4', jam: '09.00 - 09.40', kode_mapel: 'ASW', mapel: MAPEL_CODES.ASW, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Senin', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Senin', jam_ke: '7', jam: '12.00 - 12.40', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Senin', jam_ke: '1', jam: '07.40 - 08.20', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Senin', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Senin', jam_ke: '4', jam: '09.00 - 09.40', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Senin', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Senin', jam_ke: '7', jam: '12.00 - 12.40', kode_mapel: 'KKA', mapel: MAPEL_CODES.KKA, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Senin', jam_ke: '1-4', jam: '07.40 - 09.40', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Senin', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Senin', jam_ke: '7', jam: '12.00 - 12.40', kode_mapel: 'FQH', mapel: MAPEL_CODES.FQH, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VII' },
 
+      // SELASA
       { kelas: 'IX', hari: 'Selasa', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 2, guru: GURU_CODES[2], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Selasa', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Selasa', jam_ke: '5', jam: '10.00 - 10.40', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Selasa', jam_ke: '6', jam: '10.40 - 11.20', kode_mapel: 'BDR', mapel: MAPEL_CODES.BDR, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Selasa', jam_ke: '7', jam: '12.00 - 12.40', kode_mapel: 'AQDH', mapel: MAPEL_CODES.AQDH, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Selasa', jam_ke: '8', jam: '12.40 - 13.20', kode_mapel: 'KKA', mapel: MAPEL_CODES.KKA, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Selasa', jam_ke: '1-3', jam: '07.00 - 08.20', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Selasa', jam_ke: '4', jam: '07.40 - 08.20', kode_mapel: 'FQH', mapel: MAPEL_CODES.FQH, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Selasa', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'SENI', mapel: MAPEL_CODES.SENI, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Selasa', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Selasa', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'PJOK', mapel: MAPEL_CODES.PJOK, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Selasa', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Selasa', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 4, guru: GURU_CODES[4], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Selasa', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'SENI', mapel: MAPEL_CODES.SENI, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. VII' },
 
+      // RABU
       { kelas: 'IX', hari: 'Rabu', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Rabu', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Rabu', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'PRAK', mapel: MAPEL_CODES.PRAK, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Rabu', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'ITK', mapel: MAPEL_CODES.ITK, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Rabu', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'PJOK', mapel: MAPEL_CODES.PJOK, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Rabu', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Rabu', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 2, guru: GURU_CODES[2], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Rabu', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'PRAK', mapel: MAPEL_CODES.PRAK, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Rabu', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Rabu', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Rabu', jam_ke: '5-7', jam: '10.00 - 12.40', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Rabu', jam_ke: '8', jam: '12.40 - 13.20', kode_mapel: 'AQDH', mapel: MAPEL_CODES.AQDH, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VII' },
 
+      // KAMIS
       { kelas: 'IX', hari: 'Kamis', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'PJOK', mapel: MAPEL_CODES.PJOK, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Kamis', jam_ke: '3-5', jam: '07.40 - 10.40', kode_mapel: 'MAT', mapel: MAPEL_CODES.MAT, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Kamis', jam_ke: '6', jam: '10.40 - 11.20', kode_mapel: 'QRDS', mapel: MAPEL_CODES.QRDS, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Kamis', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 2, guru: GURU_CODES[2], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Kamis', jam_ke: '1-3', jam: '07.00 - 08.20', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Kamis', jam_ke: '4', jam: '07.40 - 08.20', kode_mapel: 'ASW', mapel: MAPEL_CODES.ASW, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Kamis', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 13, guru: GURU_CODES[13], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Kamis', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'ITK', mapel: MAPEL_CODES.ITK, kode_guru: 2, guru: GURU_CODES[2], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Kamis', jam_ke: '1-2', jam: '07.00 - 07.40', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Kamis', jam_ke: '3-4', jam: '07.40 - 08.20', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 4, guru: GURU_CODES[4], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Kamis', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'PRAK', mapel: MAPEL_CODES.PRAK, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Kamis', jam_ke: '7-8', jam: '12.00 - 13.20', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VII' },
 
+      // JUM'AT
       { kelas: 'IX', hari: 'Jumat', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'BIND', mapel: MAPEL_CODES.BIND, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Jumat', jam_ke: '4-5', jam: '09.30 - 10.50', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Jumat', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 12, guru: GURU_CODES[12], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Jumat', jam_ke: '4', jam: '09.30 - 10.10', kode_mapel: 'AQDH', mapel: MAPEL_CODES.AQDH, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Jumat', jam_ke: '5', jam: '10.10 - 10.50', kode_mapel: 'QRDS', mapel: MAPEL_CODES.QRDS, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Jumat', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'ITK', mapel: MAPEL_CODES.ITK, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Jumat', jam_ke: '4', jam: '09.30 - 10.10', kode_mapel: 'ASW', mapel: MAPEL_CODES.ASW, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Jumat', jam_ke: '5', jam: '10.10 - 10.50', kode_mapel: 'PKN', mapel: MAPEL_CODES.PKN, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VII' },
 
+      // SABTU
       { kelas: 'IX', hari: 'Sabtu', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'IPA', mapel: MAPEL_CODES.IPA, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Sabtu', jam_ke: '4', jam: '09.00 - 09.40', kode_mapel: 'FQH', mapel: MAPEL_CODES.FQH, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. IX' },
       { kelas: 'IX', hari: 'Sabtu', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'SENI', mapel: MAPEL_CODES.SENI, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. IX' },
+
       { kelas: 'VIII', hari: 'Sabtu', jam_ke: '2-3', jam: '07.40 - 09.00', kode_mapel: 'BING', mapel: MAPEL_CODES.BING, kode_guru: 2, guru: GURU_CODES[2], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Sabtu', jam_ke: '4', jam: '09.00 - 09.40', kode_mapel: 'BDR', mapel: MAPEL_CODES.BDR, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VIII' },
       { kelas: 'VIII', hari: 'Sabtu', jam_ke: '5-6', jam: '10.00 - 11.20', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 20, guru: GURU_CODES[20], ruang: 'R. VIII' },
+
       { kelas: 'VII', hari: 'Sabtu', jam_ke: '2', jam: '07.40 - 08.20', kode_mapel: 'QRDS', mapel: MAPEL_CODES.QRDS, kode_guru: 14, guru: GURU_CODES[14], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Sabtu', jam_ke: '3-4', jam: '08.20 - 09.40', kode_mapel: 'IPS', mapel: MAPEL_CODES.IPS, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Sabtu', jam_ke: '5', jam: '10.00 - 10.40', kode_mapel: 'KKA', mapel: MAPEL_CODES.KKA, kode_guru: 7, guru: GURU_CODES[7], ruang: 'R. VII' },
       { kelas: 'VII', hari: 'Sabtu', jam_ke: '6', jam: '10.40 - 11.20', kode_mapel: 'BDR', mapel: MAPEL_CODES.BDR, kode_guru: 21, guru: GURU_CODES[21], ruang: 'R. VII' }
     ];
 
+    // Kalender Akademik 1 Tahun Ajaran (Jul 2026 - Jun 2027) disusun kronologis
     const NATIONAL_ACADEMIC_EVENTS = [
       { iso: '2026-07-13', tanggal: '13 Jul 2026', bulan: 'Juli', judul: 'Hari Pertama Masuk Tahun Ajaran 2026/2027', kategori: 'Kalender Nasional', deskripsi: 'Awal tahun pelajaran baru & persiapan KBM.' },
       { iso: '2026-07-14', tanggal: '14 Jul 2026', bulan: 'Juli', judul: 'MPLS & Masa Ta\'aruf SMP Islamiyah', kategori: 'Kegiatan', deskripsi: 'Pengenalan lingkungan & pembiasaan karakter sekolah.' },
@@ -1131,12 +1571,19 @@
       { iso: '2027-06-19', tanggal: '19 Jun 2027', bulan: 'Juni', judul: 'Pembagian Rapor & Kenaikan Kelas', kategori: 'Akademik', deskripsi: 'Penutupan tahun ajaran & pembagian rapor genap.' }
     ];
 
+    // Rekap 1 minggu siswa Kelas IX (Senin - Sabtu)
     const WEEKLY_REKAP_IX = CLASS_IX_ROSTER.map((st, idx) => {
       const days = ['H', 'H', 'H', 'H', 'H', 'H'];
       if (idx === 1) days[1] = 'S';
       if (idx === 5) days[2] = 'I';
       if (idx === 7) { days[3] = 'I'; days[4] = 'S'; }
-      return { nis: st.nis, nama: st.nama, lp: st.lp, kelas: st.kelas, days };
+      return {
+        nis: st.nis,
+        nama: st.nama,
+        lp: st.lp,
+        kelas: st.kelas,
+        days
+      };
     });
 
     const DEMO_DB = {
@@ -1179,6 +1626,9 @@
       ]
     };
 
+    // ==========================================================
+    // 3. STATE & HELPER REGISTRASI NIS
+    // ==========================================================
     let authRole = 'siswa';
     let isRegisterMode = false;
     let currentUser = null;
@@ -1237,6 +1687,7 @@
     function getRealtimeDayName() {
       const dayMap = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       const todayName = dayMap[new Date().getDay()];
+      // Jika hari Minggu, tampilkan jadwal Senin sebagai hari efektif terdekat
       return todayName === 'Minggu' ? 'Senin' : todayName;
     }
 
@@ -1280,6 +1731,9 @@
       } catch (e) {}
     }
 
+    // ==========================================================
+    // 4. AUTH (REGISTRASI KETAT NIS KELAS IX & LOGIN WAJIB TERDAFTAR)
+    // ==========================================================
     function setAuthRole(role) {
       authRole = role;
       document.getElementById('role-siswa-btn').classList.toggle('active', role === 'siswa');
@@ -1352,6 +1806,7 @@
           await enterApp();
           return;
         } else {
+          // Mode Login: wajib sudah registrasi (atau ada di daftar akun terdaftar / database)
           let dbProfile = null;
           if (sb) {
             const { data } = await sb.from('profiles').select('*').eq('role', 'siswa').eq('nis', rosterMatch.nis).maybeSingle();
@@ -1387,6 +1842,7 @@
         }
       }
 
+      // Alur Guru
       if (authRole === 'guru') {
         const accountsMap = getAccountsMap();
         const key = `guru:${identifier.toLowerCase()}`;
@@ -1440,6 +1896,9 @@
       document.getElementById('auth-view').classList.remove('hidden');
     }
 
+    // ==========================================================
+    // 5. INISIALISASI DASHBOARD & RENDER DATA
+    // ==========================================================
     async function enterApp() {
       document.getElementById('auth-view').classList.add('hidden');
       document.getElementById('main-app').classList.remove('hidden');
@@ -1460,7 +1919,20 @@
         ? `Akun Siswa • NIS ${currentUser.nis} • Kelas ${currentUser.kelas}`
         : `Akun Guru • ${currentUser.email}`;
 
+      const m8Icon = document.getElementById('menu-8-icon');
+      const m8Label = document.getElementById('menu-8-label');
+      if (currentUser.role === 'guru') {
+        if (m8Icon) m8Icon.textContent = '🛠️';
+        if (m8Label) m8Label.textContent = 'Panel Guru';
+      } else {
+        if (m8Icon) m8Icon.textContent = '✍️';
+        if (m8Label) m8Label.textContent = 'Latihan Soal';
+      }
+
+      applyUserAvatarAndMeta();
       await loadAllData();
+      updateNotificationBadge();
+      syncChatDockUI();
       navigate('home');
     }
 
@@ -1529,6 +2001,7 @@
           sb.from('library_books').select('*')
         ]);
         if (sRes.data?.length) {
+          // Gabungkan atau pakai jika sudah ada kolom kode_mapel
           const hasCodes = sRes.data.some(r => r.kode_mapel || r.kode_guru);
           if (hasCodes) schedules = sRes.data;
         }
@@ -1573,6 +2046,7 @@
         descEl.textContent = 'Semua tagihan sekolah sudah Lunas';
       }
 
+      // Jadwal Hari Ini Realtime sesuai hari aktif & kelas siswa
       const todayDay = getRealtimeDayName();
       document.getElementById('home-schedule-title').textContent = `Jadwal Hari Ini (${todayDay})`;
       const todaySched = schedules.filter(s =>
@@ -1596,6 +2070,7 @@
         `).join('')
         : `<div class="glass-card">Tidak ada jadwal KBM reguler untuk hari ${todayDay}.</div>`;
 
+      // Agenda Sekolah Mendatang Realtime (mulai dari tanggal hari ini ke depan dalam 1 tahun ajaran)
       const todayISO = getTodayISO();
       const upcomingEvents = events.filter(ev => !ev.iso || ev.iso >= todayISO);
       const agendaPreviewList = (upcomingEvents.length ? upcomingEvents : events).slice(0, 2);
@@ -1635,6 +2110,7 @@
         </div>
       `).join('') : '<div class="glass-card">Tidak ada jadwal pada hari ini.</div>';
 
+      // Legenda Kode Mapel & Kode Guru ringkas
       const mapelLegendHtml = Object.entries(MAPEL_CODES)
         .map(([code, name]) => `<span class="code-badge" style="margin:2px;">${code} = ${name}</span>`)
         .join(' ');
@@ -2140,6 +2616,9 @@
       e.target.reset();
     }
 
+    // ==========================================================
+    // 6. NAVIGASI SPA & PWA
+    // ==========================================================
     function navigate(pageId) {
       const pages = ['home', 'jadwal', 'rekap', 'agenda', 'nilai', 'latsol', 'presensi', 'tugas', 'tagihan', 'library', 'guru-panel', 'card', 'profile'];
       pages.forEach(p => document.getElementById('page-' + p).classList.add('hidden'));
@@ -2148,6 +2627,11 @@
       if (pageId === 'rekap') renderRekap();
       if (pageId === 'presensi') renderAttendance();
       if (pageId === 'home') renderHome();
+      if (pageId === 'profile') {
+        applyUserAvatarAndMeta();
+        document.getElementById('sec-akun-body')?.classList.remove('hidden');
+        document.getElementById('sec-pengaturan-body')?.classList.remove('hidden');
+      }
 
       const isHome = pageId === 'home';
       document.getElementById('global-back-btn').classList.toggle('hidden', isHome);
@@ -2207,6 +2691,493 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
+
+    // Auto-login jika sesi tersimpan
+
+    // ================= 1. PROTEKSI ANTI BLOK / COPAS / CONTEXT MENU =================
+    document.addEventListener('contextmenu', function(e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea' && tag !== 'select') {
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('copy', function(e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('cut', function(e) {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag !== 'input' && tag !== 'textarea') {
+        e.preventDefault();
+      }
+    });
+
+    // ================= 2. NOTIFIKASI LONCENG (PR BARU, ACARA ESOK HARI, MINGGU DEPAN, PENGUMUMAN) =================
+    function getTomorrowISO() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getNextWeekRangeISO() {
+      const start = new Date();
+      start.setDate(start.getDate() + 2);
+      const end = new Date();
+      end.setDate(end.getDate() + 9);
+      const toIso = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      return { start: toIso(start), end: toIso(end) };
+    }
+
+    function buildNotificationsData() {
+      const assignments = (window.APP_DATA && window.APP_DATA.assignments) || DEMO_DB.assignments;
+      const events = (window.APP_DATA && window.APP_DATA.events) || NATIONAL_ACADEMIC_EVENTS;
+      const tomorrowIso = getTomorrowISO();
+      const nextWeek = getNextWeekRangeISO();
+
+      const prBaru = assignments.map(t => ({
+        title: `PR Baru (${t.mapel}): ${t.judul}`,
+        meta: `Batas kumpul: ${t.deadline}`,
+        desc: t.deskripsi
+      }));
+
+      let acaraEsok = events.filter(ev => ev.iso === tomorrowIso);
+      if (!acaraEsok.length) {
+        acaraEsok = [{
+          tanggal: 'Besok (07.00 WIB)',
+          judul: 'Pembiasaan Pagi & Tadarus Bersama di Halaman Sekolah',
+          deskripsi: 'Seluruh siswa hadir 10 menit sebelum bel masuk pertama.'
+        }];
+      }
+
+      let acaraMingguDepan = events.filter(ev => ev.iso && ev.iso >= nextWeek.start && ev.iso <= nextWeek.end);
+      if (!acaraMingguDepan.length) {
+        const upcoming = events.filter(ev => ev.iso && ev.iso > tomorrowIso).slice(0, 2);
+        acaraMingguDepan = upcoming.length ? upcoming : [{
+          tanggal: 'Pekan Depan',
+          judul: 'Evaluasi KBM & Persiapan Penilaian Akhir Semester',
+          deskripsi: 'Cek jadwal pelajaran serta kelengkapan tugas masing-masing mapel.'
+        }];
+      }
+
+      const pengumuman = [
+        {
+          judul: 'Pengumuman Tata Tertib Seragam & Kartu Pelajar',
+          tanggal: 'Info Sekolah',
+          deskripsi: 'Siswa wajib mengenakan seragam sesuai jadwal hari dan membawa Kartu Identitas Digital.'
+        },
+        {
+          judul: 'Layanan Konsultasi Akademik Guru (Live Chat)',
+          tanggal: 'Info Akademik',
+          deskripsi: 'Gunakan tombol Chat Guru di bagian bawah tengah untuk bertanya langsung kepada guru.'
+        }
+      ];
+
+      return { prBaru, acaraEsok, acaraMingguDepan, pengumuman };
+    }
+
+    function updateNotificationBadge() {
+      const data = buildNotificationsData();
+      const total = data.prBaru.length + data.acaraEsok.length + data.acaraMingguDepan.length + data.pengumuman.length;
+      const badge = document.getElementById('notif-badge-count');
+      if (badge) badge.textContent = total;
+    }
+
+    function openNotifModal() {
+      const { prBaru, acaraEsok, acaraMingguDepan, pengumuman } = buildNotificationsData();
+      const box = document.getElementById('notif-modal-content');
+
+      box.innerHTML = `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; font-weight:800; color:#b45309; margin-bottom:6px;">📚 PR BARU (${prBaru.length})</div>
+          ${prBaru.map(item => `
+            <div class="glass-card" style="padding:11px; margin-bottom:8px;">
+              <div style="font-weight:800; font-size:13px;">${item.title}</div>
+              <div style="font-size:11px; color:#dc2626; font-weight:700; margin-top:2px;">${item.meta}</div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">${item.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; font-weight:800; color:#1d4ed8; margin-bottom:6px;">⏰ ACARA ESOK HARI (${acaraEsok.length})</div>
+          ${acaraEsok.map(ev => `
+            <div class="glass-card" style="padding:11px; margin-bottom:8px;">
+              <span class="tag">${ev.tanggal}</span>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">${ev.judul}</div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">${ev.deskripsi}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px; font-weight:800; color:#047857; margin-bottom:6px;">🗓️ ACARA MINGGU DEPAN (${acaraMingguDepan.length})</div>
+          ${acaraMingguDepan.map(ev => `
+            <div class="glass-card" style="padding:11px; margin-bottom:8px;">
+              <span class="tag lunas">${ev.tanggal}</span>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">${ev.judul}</div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">${ev.deskripsi}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div>
+          <div style="font-size:12px; font-weight:800; color:#7e22ce; margin-bottom:6px;">📢 PENGUMUMAN SEKOLAH (${pengumuman.length})</div>
+          ${pengumuman.map(p => `
+            <div class="glass-card" style="padding:11px; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:13px;">${p.judul}</strong>
+                <span class="tag">${p.tanggal}</span>
+              </div>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">${p.deskripsi}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      document.getElementById('notif-modal').classList.remove('hidden');
+    }
+
+    function closeNotifModal() {
+      document.getElementById('notif-modal').classList.add('hidden');
+    }
+
+    // ================= 3. AKUN & PENGATURAN: FOTO PROFIL (KAMERA/GALERI) & WA PRIVAT =================
+    function getProfileMetaKey(userObj) {
+      const id = userObj.role === 'siswa' ? `siswa_${userObj.nis}` : `guru_${(userObj.email || '').toLowerCase()}`;
+      return `islamiyah_profile_meta_${id}`;
+    }
+
+    function getUserProfileMeta(userObj) {
+      try {
+        const raw = localStorage.getItem(getProfileMetaKey(userObj));
+        return raw ? JSON.parse(raw) : { photo: '', whatsapp: '' };
+      } catch (e) {
+        return { photo: '', whatsapp: '' };
+      }
+    }
+
+    function saveUserProfileMeta(userObj, meta) {
+      try {
+        localStorage.setItem(getProfileMetaKey(userObj), JSON.stringify(meta));
+      } catch (e) {
+        showToast('Ukuran foto terlalu besar untuk penyimpanan lokal.');
+      }
+    }
+
+    function applyUserAvatarAndMeta() {
+      if (!currentUser) return;
+      const meta = getUserProfileMeta(currentUser);
+      const initial = (currentUser.full_name || 'U').charAt(0).toUpperCase();
+
+      const hdrAvatar = document.getElementById('hdr-avatar');
+      const profPreview = document.getElementById('prof-avatar-preview');
+      if (meta.photo) {
+        hdrAvatar.innerHTML = `<img src="${meta.photo}" alt="Foto Profil" />`;
+        if (profPreview) profPreview.innerHTML = `<img src="${meta.photo}" alt="Foto Profil" />`;
+      } else {
+        hdrAvatar.textContent = initial;
+        if (profPreview) profPreview.textContent = initial;
+      }
+
+      const waInput = document.getElementById('prof-wa-input');
+      const waStatus = document.getElementById('prof-wa-status');
+      if (waInput) waInput.value = meta.whatsapp || '';
+      if (waStatus) {
+        waStatus.textContent = meta.whatsapp ? `WA Tersimpan: ${meta.whatsapp} (Privat Guru)` : 'WA: Belum diatur';
+      }
+
+      // Render direktori WA siswa khusus jika akun yang login adalah Guru
+      const dirBox = document.getElementById('guru-wa-directory-box');
+      const dirList = document.getElementById('guru-wa-directory-list');
+      if (currentUser.role === 'guru' && dirBox && dirList) {
+        dirBox.classList.remove('hidden');
+        const rows = CLASS_IX_ROSTER.map(st => {
+          const stMeta = getUserProfileMeta({ role: 'siswa', nis: st.nis });
+          return { ...st, wa: stMeta.whatsapp || '' };
+        }).filter(r => r.wa);
+
+        dirList.innerHTML = rows.length
+          ? rows.map(r => `
+              <div style="padding:8px 10px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-size:12.5px; font-weight:800;">${r.nama}</div>
+                  <div style="font-size:11px; color:#64748b;">NIS ${r.nis} • Kelas ${r.kelas}</div>
+                </div>
+                <span class="tag lunas">${r.wa}</span>
+              </div>
+            `).join('')
+          : `<div style="font-size:12px; color:#64748b; padding:8px; background:#f8fafc; border-radius:12px;">Belum ada siswa yang menginput nomor WhatsApp.</div>`;
+      } else if (dirBox) {
+        dirBox.classList.add('hidden');
+      }
+    }
+
+    function toggleProfileSection(bodyId, chevId) {
+      const body = document.getElementById(bodyId);
+      const chev = document.getElementById(chevId);
+      if (!body) return;
+      const isHidden = body.classList.toggle('hidden');
+      if (chev) chev.textContent = isHidden ? '▸' : '▾';
+    }
+
+    function handleProfilePhotoSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file || !currentUser) return;
+
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+          // Kompres foto ke ukuran ringan 240x240 agar cepat & hemat storage
+          const canvas = document.createElement('canvas');
+          const size = 240;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const minSide = Math.min(img.width, img.height);
+          const sx = (img.width - minSide) / 2;
+          const sy = (img.height - minSide) / 2;
+          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+          const meta = getUserProfileMeta(currentUser);
+          meta.photo = compressedDataUrl;
+          saveUserProfileMeta(currentUser, meta);
+          applyUserAvatarAndMeta();
+          showToast('Foto profil berhasil diperbarui!');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveProfileSettings(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+      const waRaw = document.getElementById('prof-wa-input').value.trim();
+      const meta = getUserProfileMeta(currentUser);
+      meta.whatsapp = waRaw;
+      saveUserProfileMeta(currentUser, meta);
+      applyUserAvatarAndMeta();
+      showToast('Profil & Nomor WhatsApp (Privat Guru) tersimpan!');
+    }
+
+    function handleMenu8Click() {
+      if (currentUser && currentUser.role === 'guru') {
+        navigate('guru-panel');
+      } else {
+        navigate('latsol');
+      }
+    }
+
+    // ================= 4. LIVE CHAT INTERAKTIF (BUBBLE MESSENGER TETAP DI BAWAH + FIRST-RESPONDER LOCK + AUTO HANGUS) =================
+    const LIVE_CHAT_STORE_KEY = 'islamiyah_live_chat_sessions_v1';
+    let isCompactChatOpen = false;
+    let activeChatSessionId = null;
+
+    function getAllChatSessions() {
+      try {
+        const raw = localStorage.getItem(LIVE_CHAT_STORE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveAllChatSessions(sessions) {
+      try {
+        localStorage.setItem(LIVE_CHAT_STORE_KEY, JSON.stringify(sessions));
+      } catch (e) {}
+    }
+
+    function getVisibleChatSessionForCurrentUser() {
+      if (!currentUser) return null;
+      const sessions = getAllChatSessions().filter(s => s.status === 'active');
+      if (currentUser.role === 'siswa') {
+        return sessions.find(s => s.studentNis === currentUser.nis) || null;
+      } else {
+        const myGuruId = (currentUser.email || currentUser.full_name || 'guru').toLowerCase();
+        // Guru hanya bisa melihat sesi yang belum diklaim guru manapun ATAU sesi yang pertama kali dibalas oleh guru ini sendiri
+        return sessions.find(s => !s.claimedByGuruId || s.claimedByGuruId === myGuruId) || null;
+      }
+    }
+
+    function handleCenterChatButton() {
+      if (!currentUser) return;
+      let session = getVisibleChatSessionForCurrentUser();
+
+      if (!session) {
+        if (currentUser.role === 'siswa') {
+          session = {
+            id: 'chat_' + Date.now(),
+            studentNis: currentUser.nis,
+            studentName: currentUser.full_name,
+            studentKelas: currentUser.kelas,
+            claimedByGuruId: null,
+            status: 'active',
+            createdAt: Date.now(),
+            messages: [
+              {
+                senderRole: 'system',
+                text: 'Sesi tanya guru dimulai. Guru yang pertama membalas akan terhubung secara privat denganmu.',
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+              }
+            ]
+          };
+          const all = getAllChatSessions();
+          all.push(session);
+          saveAllChatSessions(all);
+        } else {
+          showToast('Belum ada chat masuk dari siswa saat ini.');
+          syncChatDockUI();
+          return;
+        }
+      }
+
+      activeChatSessionId = session.id;
+      toggleCompactChat(true);
+    }
+
+    function toggleCompactChat(forceState) {
+      isCompactChatOpen = typeof forceState === 'boolean' ? forceState : !isCompactChatOpen;
+      syncChatDockUI();
+    }
+
+    function syncChatDockUI() {
+      const wrapper = document.getElementById('chat-dock-wrapper');
+      const box = document.getElementById('messenger-compact-box');
+      const bubble = document.getElementById('messenger-bubble-bar');
+      if (!wrapper || !currentUser) return;
+
+      const session = getVisibleChatSessionForCurrentUser();
+      if (!session) {
+        wrapper.classList.add('hidden');
+        box.classList.add('hidden');
+        isCompactChatOpen = false;
+        activeChatSessionId = null;
+        return;
+      }
+
+      activeChatSessionId = session.id;
+      wrapper.classList.remove('hidden');
+      bubble.classList.remove('hidden');
+
+      const peerTitle = document.getElementById('m-chat-peer-title');
+      const peerSub = document.getElementById('m-chat-peer-sub');
+      const bubbleLabel = document.getElementById('m-bubble-label');
+      const bubbleSub = document.getElementById('m-bubble-sub');
+
+      if (currentUser.role === 'guru') {
+        // PADA AKUN GURU: Tampilkan NAMA SISWA
+        peerTitle.textContent = `Siswa: ${session.studentName} (Kls ${session.studentKelas})`;
+        peerSub.textContent = session.claimedByGuruId
+          ? 'Terkunci untuk Anda • Hangus setelah selesai'
+          : 'Menunggu balasan pertama Anda';
+        bubbleLabel.textContent = `Chat: ${session.studentName}`;
+        bubbleSub.textContent = session.claimedByGuruId ? 'Obrolan aktif • Ketuk buka' : 'Pesan baru siswa • Balas pertama';
+      } else {
+        // PADA AKUN SISWA: JANGAN tampilkan nama guru yang membalas
+        peerTitle.textContent = 'Guru Pembimbing (Privat)';
+        peerSub.textContent = session.claimedByGuruId
+          ? 'Guru sedang terhubung • Otomatis hangus setelah selesai'
+          : 'Menunggu guru pertama membalas...';
+        bubbleLabel.textContent = 'Ruang Chat Guru';
+        bubbleSub.textContent = `${session.messages.length} pesan • Ketuk buka/tutup`;
+      }
+
+      if (isCompactChatOpen) {
+        box.classList.remove('hidden');
+        renderChatMessages(session);
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    function renderChatMessages(session) {
+      const listEl = document.getElementById('m-chat-messages');
+      if (!listEl) return;
+
+      listEl.innerHTML = session.messages.map(m => {
+        if (m.senderRole === 'system') {
+          return `<div style="text-align:center; font-size:10.5px; color:#64748b; background:#e2e8f0; padding:5px 9px; border-radius:10px;">${m.text}</div>`;
+        }
+        const isMe = m.senderRole === currentUser.role;
+        // Identitas pengirim: Jika guru melihat pesan siswa -> tampilkan nama siswa; jika siswa melihat pesan guru -> TANPA nama guru ("Guru")
+        let senderLabel = '';
+        if (currentUser.role === 'guru') {
+          senderLabel = isMe ? 'Anda (Guru)' : `${session.studentName}`;
+        } else {
+          senderLabel = isMe ? 'Kamu' : 'Guru';
+        }
+
+        return `
+          <div class="chat-msg ${isMe ? 'me' : 'other'}">
+            <div class="chat-msg-meta">${senderLabel} • ${m.time}</div>
+            <div>${m.text}</div>
+          </div>
+        `;
+      }).join('');
+
+      listEl.scrollTop = listEl.scrollHeight;
+    }
+
+    function sendLiveChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('m-chat-input');
+      const text = input.value.trim();
+      if (!text || !currentUser) return;
+
+      const all = getAllChatSessions();
+      const idx = all.findIndex(s => s.id === activeChatSessionId && s.status === 'active');
+      if (idx === -1) {
+        showToast('Sesi chat sudah hangus / berakhir.');
+        syncChatDockUI();
+        return;
+      }
+
+      const session = all[idx];
+      if (currentUser.role === 'guru') {
+        const myGuruId = (currentUser.email || currentUser.full_name || 'guru').toLowerCase();
+        // Kunci sesi hanya untuk guru PERTAMA yang membalas
+        if (session.claimedByGuruId && session.claimedByGuruId !== myGuruId) {
+          showToast('Chat ini sudah dibalas lebih dulu oleh guru lain dan otomatis menghilang.');
+          syncChatDockUI();
+          return;
+        }
+        session.claimedByGuruId = myGuruId;
+      }
+
+      session.messages.push({
+        senderRole: currentUser.role,
+        text,
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      });
+
+      all[idx] = session;
+      saveAllChatSessions(all);
+      input.value = '';
+      syncChatDockUI();
+    }
+
+    function expireAndCloseChatSession() {
+      if (!activeChatSessionId) return;
+      // Hapus permanen (hangus) dari penyimpanan agar tidak bisa dilihat lagi
+      const remaining = getAllChatSessions().filter(s => s.id !== activeChatSessionId);
+      saveAllChatSessions(remaining);
+      activeChatSessionId = null;
+      isCompactChatOpen = false;
+      syncChatDockUI();
+      showToast('Sesi obrolan telah diakhiri dan hangus.');
+    }
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === LIVE_CHAT_STORE_KEY) {
+        syncChatDockUI();
+      }
+    });
 
     const savedUser = localStorage.getItem('islamiyah_user');
     if (savedUser) {
